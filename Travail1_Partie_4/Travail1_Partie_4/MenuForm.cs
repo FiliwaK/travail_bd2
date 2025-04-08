@@ -22,5 +22,11 @@ namespace Travail1_Partie_4
             var maForme = new RechercherModifierEmploye();
             maForme.ShowDialog();
         }
+
+        private void imputationDePieceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var maForme = new ImputationDePiece();
+            maForme.ShowDialog();
+        }
     }
 }

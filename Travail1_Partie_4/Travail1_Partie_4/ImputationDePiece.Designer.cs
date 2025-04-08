@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
-            numero_Label = new Label();
-            label1 = new Label();
-            selectionner_DataGridView = new DataGridView();
-            numeroPiece_TextBox = new TextBox();
             recherche_Button = new Button();
+            numeroPiece_TextBox = new TextBox();
+            selectionner_DataGridView = new DataGridView();
+            label1 = new Label();
+            numero_Label = new Label();
             groupBox3 = new GroupBox();
             choisirEmployer_Button = new Button();
             choisirUnEmployer_ComboBox = new ComboBox();
@@ -69,14 +69,30 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Recherche une piece avec ou sans scanner";
             // 
-            // numero_Label
+            // recherche_Button
             // 
-            numero_Label.AutoSize = true;
-            numero_Label.Location = new Point(36, 35);
-            numero_Label.Name = "numero_Label";
-            numero_Label.Size = new Size(209, 15);
-            numero_Label.TabIndex = 1;
-            numero_Label.Text = "Numero de piece ou partie de numero";
+            recherche_Button.Location = new Point(599, 20);
+            recherche_Button.Name = "recherche_Button";
+            recherche_Button.Size = new Size(149, 34);
+            recherche_Button.TabIndex = 6;
+            recherche_Button.Text = "Recherche";
+            recherche_Button.UseVisualStyleBackColor = true;
+            recherche_Button.Click += recherche_Button_Click;
+            // 
+            // numeroPiece_TextBox
+            // 
+            numeroPiece_TextBox.Location = new Point(295, 31);
+            numeroPiece_TextBox.Name = "numeroPiece_TextBox";
+            numeroPiece_TextBox.Size = new Size(169, 23);
+            numeroPiece_TextBox.TabIndex = 5;
+            // 
+            // selectionner_DataGridView
+            // 
+            selectionner_DataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            selectionner_DataGridView.Location = new Point(176, 107);
+            selectionner_DataGridView.Name = "selectionner_DataGridView";
+            selectionner_DataGridView.Size = new Size(443, 71);
+            selectionner_DataGridView.TabIndex = 4;
             // 
             // label1
             // 
@@ -87,29 +103,14 @@
             label1.TabIndex = 2;
             label1.Text = "Numero de piece ou partie de numero";
             // 
-            // selectionner_DataGridView
+            // numero_Label
             // 
-            selectionner_DataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            selectionner_DataGridView.Location = new Point(176, 107);
-            selectionner_DataGridView.Name = "selectionner_DataGridView";
-            selectionner_DataGridView.Size = new Size(443, 71);
-            selectionner_DataGridView.TabIndex = 4;
-            // 
-            // numeroPiece_TextBox
-            // 
-            numeroPiece_TextBox.Location = new Point(295, 31);
-            numeroPiece_TextBox.Name = "numeroPiece_TextBox";
-            numeroPiece_TextBox.Size = new Size(169, 23);
-            numeroPiece_TextBox.TabIndex = 5;
-            // 
-            // recherche_Button
-            // 
-            recherche_Button.Location = new Point(599, 20);
-            recherche_Button.Name = "recherche_Button";
-            recherche_Button.Size = new Size(149, 34);
-            recherche_Button.TabIndex = 6;
-            recherche_Button.Text = "Recherche";
-            recherche_Button.UseVisualStyleBackColor = true;
+            numero_Label.AutoSize = true;
+            numero_Label.Location = new Point(36, 35);
+            numero_Label.Name = "numero_Label";
+            numero_Label.Size = new Size(209, 15);
+            numero_Label.TabIndex = 1;
+            numero_Label.Text = "Numero de piece ou partie de numero";
             // 
             // groupBox3
             // 

@@ -16,5 +16,19 @@ namespace Travail1_Partie_4
         {
             InitializeComponent();
         }
+        private void RechercherPiece()
+        {
+
+        }
+
+        private void recherche_Button_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(numeroPiece_TextBox.Text))
+            {
+                MessageBox.Show("Veuillez entrer un numéro de pièce ou une partie de celui-ci.");
+                return;
+            }
+            RechercherPiece();
+        }
     }
 }
