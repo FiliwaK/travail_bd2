@@ -64,14 +64,14 @@
             groupBox1.Controls.Add(numero_Label);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(877, 193);
+            groupBox1.Size = new Size(877, 243);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Recherche une piece avec ou sans scanner";
             // 
             // recherche_Button
             // 
-            recherche_Button.Location = new Point(599, 20);
+            recherche_Button.Location = new Point(615, 24);
             recherche_Button.Name = "recherche_Button";
             recherche_Button.Size = new Size(149, 34);
             recherche_Button.TabIndex = 6;
@@ -83,7 +83,7 @@
             // 
             numeroPiece_TextBox.Location = new Point(295, 31);
             numeroPiece_TextBox.Name = "numeroPiece_TextBox";
-            numeroPiece_TextBox.Size = new Size(169, 23);
+            numeroPiece_TextBox.Size = new Size(276, 23);
             numeroPiece_TextBox.TabIndex = 5;
             // 
             // selectionner_DataGridView
@@ -91,7 +91,7 @@
             selectionner_DataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             selectionner_DataGridView.Location = new Point(176, 107);
             selectionner_DataGridView.Name = "selectionner_DataGridView";
-            selectionner_DataGridView.Size = new Size(443, 71);
+            selectionner_DataGridView.Size = new Size(502, 130);
             selectionner_DataGridView.TabIndex = 4;
             // 
             // label1

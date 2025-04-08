@@ -37,6 +37,10 @@
       {
          "Name": "[dbo].[tbl_stock]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[RechercherPieceParNumeroIndustrie]",
+         "ObjectType": 1
       }
    ],
    "UiHint": null,

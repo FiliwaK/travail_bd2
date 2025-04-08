@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Travail1_Partie_4.Models;
 
 [Table("tbl_projet")]
-[Index("Description", Name = "UQ__tbl_proj__489B0D972C22AFEA", IsUnique = true)]
-[Index("Nom", Name = "UQ__tbl_proj__DF90DC2C2FE2AC01", IsUnique = true)]
+[Index("Description", Name = "UQ__tbl_proj__489B0D97C7E01F03", IsUnique = true)]
+[Index("Nom", Name = "UQ__tbl_proj__DF90DC2CED88E9AD", IsUnique = true)]
 public partial class TblProjet
 {
     [Key]
