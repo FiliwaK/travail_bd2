@@ -388,5 +388,17 @@ INNER JOIN (
 
 
 
+CREATE PROCEDURE RechercherPieceParNumeroIndustrie
+    @noIndustrie NVARCHAR(100)
+AS
+BEGIN
+    SELECT numeroIndustrie, description
+    FROM tbl_piece
+    WHERE numeroIndustrie LIKE '%' + @noIndustrie + '%'
+    ORDER BY numeroIndustrie;
+END
+
+
+
 
 
