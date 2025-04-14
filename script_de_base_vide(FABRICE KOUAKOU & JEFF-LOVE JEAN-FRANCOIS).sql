@@ -15,6 +15,7 @@ BEGIN
 END
 
 
+
 /* création de votre bd  */
 
 CREATE DATABASE Bd_Reseau
@@ -22,6 +23,14 @@ go
 
 Use Bd_Reseau
 go
+
+/* voici le code permettant de donner les droits à un autre usager, ici nommé [sonNoDa] */
+/* création de l'usager */
+CREATE USER [Kouakou Filiwa Fabrice Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/* spécification de ses droits*/
+ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
+GO
 
 /* création de vos tables simples */
 
@@ -388,15 +397,20 @@ INNER JOIN (
 
 
 
-CREATE PROCEDURE RechercherPieceParNumeroIndustrie
+GO
+CREATE OR ALTER PROCEDURE RechercherPieceParNumeroIndustrie
     @noIndustrie NVARCHAR(100)
 AS
 BEGIN
+    SET NOCOUNT ON;
+
     SELECT numeroIndustrie, description
     FROM tbl_piece
     WHERE numeroIndustrie LIKE '%' + @noIndustrie + '%'
     ORDER BY numeroIndustrie;
 END
+GO
+
 
 
 
