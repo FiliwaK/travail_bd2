@@ -18,7 +18,7 @@ namespace Travail1_Partie_4.Manager
         //    }
         //}
 
-        public async Task<List<RechercherPieceParNumeroIndustrieResult>> ListPiece(string numeroDePiece) //pour afficher dans un messagebox, procedure qui retourne un scalaire 
+        public async Task<List<RechercherPieceParNumeroIndustrieResult>> ListerPiece(string numeroDePiece) //pour afficher dans un messagebox, procedure qui retourne un scalaire 
         {
             List<RechercherPieceParNumeroIndustrieResult> listeDesPieces;
             using (var context = new Bd_ReseauContext())

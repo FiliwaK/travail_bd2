@@ -14,23 +14,17 @@ namespace Travail1_Partie_4
 {
     public partial class ImputationDePiece : Form
     {
-        List<TblPiece> pieces;
+        List<RechercherPieceParNumeroIndustrieResult> pieces;
 
         public ImputationDePiece()
         {
             InitializeComponent();
         }
 
-        private void FiltrerRechercheComboBox(string recherche)
+        private async void FiltrerRechercheComboBox(string recherche)
         {
             var managerPiece = new ManagerPiece();
-            pieces = managerPiece.ListPiece(recherche);
-            //selectionnerEmploye_ComboBox.DataSource = employes;
-            //selectionnerEmploye_ComboBox.DisplayMember = "NomComplet";
-            //selectionnerEmploye_ComboBox.ValueMember = "IdEmployee"; //ce n'est pas le nom de la colonne dans la base de Donnees mais le nom de la colonne dans la classe
-            //selectionnerEmploye_ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            //selectionnerEmploye_ComboBox.SelectedValue = "";
-
+            pieces = await managerPiece.ListerPiece(recherche);
             remplirDataGridView();
 
         }
@@ -40,10 +34,6 @@ namespace Travail1_Partie_4
             try
             {
                 selectionner_DataGridView.DataSource = pieces;
-
-
-
-
             }
             catch (Exception ex)
             {

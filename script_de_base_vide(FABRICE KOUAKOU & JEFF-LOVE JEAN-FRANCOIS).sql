@@ -26,10 +26,17 @@ go
 
 /* voici le code permettant de donner les droits à un autre usager, ici nommé [sonNoDa] */
 /* création de l'usager */
+<<<<<<< Updated upstream
 CREATE USER [Kouakou Filiwa Fabrice Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
 GO
 /* spécification de ses droits*/
 ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
+=======
+CREATE USER [Jeff love Jean Francois] FOR LOGIN [corporatif\2334062] WITH DEFAULT_SCHEMA=[dbo]
+GO
+/* spécification de ses droits*/
+ALTER ROLE [db_owner] ADD MEMBER [Jeff love Jean Francois]
+>>>>>>> Stashed changes
 GO
 
 /* création de vos tables simples */
@@ -256,6 +263,7 @@ WHERE tbl_stock.id_piece IN (SELECT id_piece FROM tbl_piece WHERE description = 
 AND e1.nom = 'Tremblay' 
 AND e1.prenom = 'Émilie'
 
+go
 
 
 
@@ -302,6 +310,7 @@ WHERE tbl_stock.id_piece IN (SELECT id_piece FROM tbl_piece WHERE description = 
 AND e1.nom = 'Bergeron' 
 AND e1.prenom = 'Michel'
 
+go
 
 /* 4. un select des tables pour prouver les bons ajouts */
 
@@ -315,6 +324,7 @@ FROM            tbl_projet INNER JOIN
                          tbl_impute INNER JOIN
                          tbl_employee ON tbl_impute.id_employee = tbl_employee.id_employee ON tbl_stock.id_stock = tbl_impute.id_stock
 
+go
 
 /* 5.	Faites une instruction SQL qui vous affiche, pour chaque pièce, le nombre d’imputations réalisé en tout dans le magasin, 
 		la quantité totale de pièces imputées, 
@@ -339,7 +349,7 @@ INNER JOIN (
     GROUP BY s.id_piece
 ) statistiques ON p.id_piece = statistiques.id_piece;
 
-
+go
 /* 6. tests de contrainte  */
 /* contrainte CHECK sur email */	
 
@@ -397,7 +407,10 @@ INNER JOIN (
 
 
 
+<<<<<<< Updated upstream
 GO
+=======
+>>>>>>> Stashed changes
 CREATE OR ALTER PROCEDURE RechercherPieceParNumeroIndustrie
     @noIndustrie NVARCHAR(100)
 AS
@@ -410,6 +423,7 @@ BEGIN
     ORDER BY numeroIndustrie;
 END
 GO
+
 
 
 
