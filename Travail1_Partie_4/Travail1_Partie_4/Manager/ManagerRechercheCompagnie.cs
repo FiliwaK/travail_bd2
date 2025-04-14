@@ -28,5 +28,26 @@ namespace Travail1_Partie_4
 
             return compagnie?.TblProjets.ToList();
         }
+
+        public List<TblCompagnie> ObtenirToutesLesCompagniesSansProjets()
+        {
+            return context.TblCompagnies.ToList();
+        }
+
+        public List<TblProjet> ChargerLesProjetsPourCompagnie(int idCompagnie)
+        {
+            var compagnie = context.TblCompagnies.FirstOrDefault(c => c.IdCompagnie == idCompagnie);
+
+            if (compagnie != null)
+            {
+                context.Entry(compagnie)
+                       .Collection(c => c.TblProjets)
+                       .Load();
+
+                return compagnie.TblProjets.ToList();
+            }
+
+            return new List<TblProjet>();
+        }
     }
 }

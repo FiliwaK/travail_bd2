@@ -25,6 +25,7 @@ namespace Travail1_Partie_4
         {
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView.Columns["TblProjets"].Visible = false;
+           // dataGridView.Columns[""].Visible = false ;
         }
 
         private void button_Recherchee_Click(object sender, EventArgs e)
@@ -62,7 +63,39 @@ namespace Travail1_Partie_4
             {
                 MessageBox.Show("Erreur : " + ex.Message);
             }
+
         }
 
+        private void button_Rechercher_Click(object sender, EventArgs e)
+        {
+            var compagniesSansProjets = _managerRechercheCompagnie.ObtenirToutesLesCompagniesSansProjets();
+            explicytLoadingRecherche_DataGridView.DataSource = compagniesSansProjets;
+
+            DesactiverLesColonnesenTrop(explicytLoadingRecherche_DataGridView);
+            explicytLoadingRecherche_DataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            explicytLoadingRecherche_DataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 10);
+
+            explicytLoadingRecherche_DataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            explicytLoadingRecherche_DataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 10);
+
+        }
+
+        private void explicytLoading_DataGridView_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int noCompagnie = PrendreLaPieceChoisir(explicytLoadingRecherche_DataGridView);
+
+                var projets = _managerRechercheCompagnie.ChargerLesProjetsPourCompagnie(noCompagnie);
+
+                explicytLoadingDataGridView.DataSource = projets;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur : " + ex.Message);
+            }
+            explicytLoadingDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            explicytLoadingDataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 10);
+        }
     }
 }

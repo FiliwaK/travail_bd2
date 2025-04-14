@@ -35,7 +35,7 @@
             label3 = new Label();
             label2 = new Label();
             textBox2 = new TextBox();
-            explicytLoading_DataGridView = new DataGridView();
+            explicytLoadingRecherche_DataGridView = new DataGridView();
             groupBox2 = new GroupBox();
             eagleLoadingCompagnie_DataGridView = new DataGridView();
             groupBox1 = new GroupBox();
@@ -47,7 +47,7 @@
             groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)explicytLoadingDataGridView).BeginInit();
             groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)explicytLoading_DataGridView).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)explicytLoadingRecherche_DataGridView).BeginInit();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)eagleLoadingCompagnie_DataGridView).BeginInit();
             groupBox1.SuspendLayout();
@@ -78,7 +78,7 @@
             groupBox3.Controls.Add(label3);
             groupBox3.Controls.Add(label2);
             groupBox3.Controls.Add(textBox2);
-            groupBox3.Controls.Add(explicytLoading_DataGridView);
+            groupBox3.Controls.Add(explicytLoadingRecherche_DataGridView);
             groupBox3.Location = new Point(526, 24);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(468, 219);
@@ -94,6 +94,7 @@
             button_Rechercher.TabIndex = 10;
             button_Rechercher.Text = "Recherche explicyt lodding";
             button_Rechercher.UseVisualStyleBackColor = true;
+            button_Rechercher.Click += button_Rechercher_Click;
             // 
             // label3
             // 
@@ -120,13 +121,14 @@
             textBox2.Size = new Size(70, 23);
             textBox2.TabIndex = 6;
             // 
-            // explicytLoading_DataGridView
+            // explicytLoadingRecherche_DataGridView
             // 
-            explicytLoading_DataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            explicytLoading_DataGridView.Location = new Point(17, 92);
-            explicytLoading_DataGridView.Name = "explicytLoading_DataGridView";
-            explicytLoading_DataGridView.Size = new Size(445, 93);
-            explicytLoading_DataGridView.TabIndex = 3;
+            explicytLoadingRecherche_DataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            explicytLoadingRecherche_DataGridView.Location = new Point(17, 92);
+            explicytLoadingRecherche_DataGridView.Name = "explicytLoadingRecherche_DataGridView";
+            explicytLoadingRecherche_DataGridView.Size = new Size(445, 93);
+            explicytLoadingRecherche_DataGridView.TabIndex = 3;
+            explicytLoadingRecherche_DataGridView.Click += explicytLoading_DataGridView_Click;
             // 
             // groupBox2
             // 
@@ -220,7 +222,7 @@
             ((System.ComponentModel.ISupportInitialize)explicytLoadingDataGridView).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)explicytLoading_DataGridView).EndInit();
+            ((System.ComponentModel.ISupportInitialize)explicytLoadingRecherche_DataGridView).EndInit();
             groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)eagleLoadingCompagnie_DataGridView).EndInit();
             groupBox1.ResumeLayout(false);
@@ -234,7 +236,7 @@
         private GroupBox groupBox4;
         private DataGridView explicytLoadingDataGridView;
         private GroupBox groupBox3;
-        private DataGridView explicytLoading_DataGridView;
+        private DataGridView explicytLoadingRecherche_DataGridView;
         private GroupBox groupBox2;
         private DataGridView eagleLoadingCompagnie_DataGridView;
         private GroupBox groupBox1;
