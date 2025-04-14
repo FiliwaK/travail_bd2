@@ -45,6 +45,9 @@ namespace Travail1_Partie_4
         {
             string recherche = numeroPiece_TextBox.Text;
             FiltrerRechercheComboBox(recherche);
+            selectionner_DataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            selectionner_DataGridView.DefaultCellStyle.Font = new Font("Segoe UI", 10);
+
         }
     }
 }
