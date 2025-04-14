@@ -8,17 +8,10 @@ using Travail1_Partie_4.Models;
 
 namespace Travail1_Partie_4.Manager
 {
-    internal class ManagerPiece
+    public class ManagerPiece
     {
-        //public List<TblPiece> ListPiece(string recherche)
-        //{
-        //    using (var context = new Bd_ReseauContext())
-        //    {
-        //        return context.TblPieces.Where(e => EF.Functions.Like(e.NumeroIndustrie, $"%{recherche}%")).OrderBy(e => e.NumeroIndustrie).ToList();
-        //    }
-        //}
 
-        public async Task<List<RechercherPieceParNumeroIndustrieResult>> ListerPiece(string numeroDePiece) //pour afficher dans un messagebox, procedure qui retourne un scalaire 
+        public async Task<List<RechercherPieceParNumeroIndustrieResult>> ListerPiece(string numeroDePiece)  
         {
             List<RechercherPieceParNumeroIndustrieResult> listeDesPieces;
             using (var context = new Bd_ReseauContext())
@@ -28,5 +21,14 @@ namespace Travail1_Partie_4.Manager
             return listeDesPieces;
         }
 
+        public async Task<List<RechercherProjetsParNumeroIndustrieResult>> ListerProjet(string numeroDePiece) 
+        {
+            List<RechercherProjetsParNumeroIndustrieResult> listeDesProjets;
+            using (var context = new Bd_ReseauContext())
+            {
+                listeDesProjets = await context.Procedures.RechercherProjetsParNumeroIndustrieAsync(numeroDePiece);
+            }
+            return listeDesProjets;
+        }
     }
 }

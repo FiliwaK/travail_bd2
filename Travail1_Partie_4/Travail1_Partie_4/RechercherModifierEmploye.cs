@@ -17,6 +17,8 @@ namespace Travail1_Partie_4
     public partial class RechercherModifierEmploye : Form
     {
         List<TblEmployee> employes;
+        public TblEmployee EmployeSelectionne { get;}
+
 
         public RechercherModifierEmploye()
         {
@@ -83,7 +85,7 @@ namespace Travail1_Partie_4
 
         public bool ChampsRemplit()
         {
-            return (!string.IsNullOrEmpty(no_employe_TextBox.Text) 
+            return (!string.IsNullOrEmpty(no_employe_TextBox.Text)
                 && !string.IsNullOrEmpty(nom_TextBox.Text) &&
                 !string.IsNullOrEmpty(prenom_TextBox.Text)
                 && !string.IsNullOrEmpty(email_TextBox.Text));
@@ -139,6 +141,17 @@ namespace Travail1_Partie_4
                 MessageBox.Show(ex.Message, "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+        public TblEmployee ListeDEmployee()
+        {
+           return selectionnerEmploye_ComboBox.SelectedItem as TblEmployee;
+        }
+
+        private void selectionnerEmployeButton_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
-   
+
 }

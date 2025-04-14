@@ -15,6 +15,7 @@ namespace Travail1_Partie_4
     public partial class ImputationDePiece : Form
     {
         List<RechercherPieceParNumeroIndustrieResult> pieces;
+        List<RechercherProjetsParNumeroIndustrieResult> projets;
 
         public ImputationDePiece()
         {
@@ -45,6 +46,43 @@ namespace Travail1_Partie_4
         {
             string recherche = numeroPiece_TextBox.Text;
             FiltrerRechercheComboBox(recherche);
+        }
+
+        private void RemplirProjetComboBox()
+        {
+            choisirUnProjet_ComboBox.DataSource = projets;
+            choisirUnProjet_ComboBox.DisplayMember = "nom_projet";
+            choisirUnProjet_ComboBox.ValueMember = "id_projet";
+            choisirUnProjet_ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            choisirUnProjet_ComboBox.SelectedValue = "";
+        }
+
+        private async void selectionner_DataGridView_Click(object sender, EventArgs e)
+        {
+            ManagerPiece managerPiece = new ManagerPiece();
+            string noPiece = (string)selectionner_DataGridView[0, selectionner_DataGridView.CurrentRow.Index].Value;
+            projets = await managerPiece.ListerProjet(noPiece);
+            RemplirProjetComboBox();
+        }
+
+        private void choisirEmployer_Button_Click(object sender, EventArgs e)
+        {
+            List<TblEmployee> employeSelectionne = new List<TblEmployee>();
+            var maForme = new RechercherModifierEmploye();
+            var result = maForme.ShowDialog();
+            employeSelectionne.Add(maForme.ListeDEmployee());
+
+            choisirUnEmployer_ComboBox.DataSource = employeSelectionne;
+            choisirUnEmployer_ComboBox.DisplayMember = "NomComplet";
+            choisirUnEmployer_ComboBox.ValueMember = "idemployee";
+            choisirUnEmployer_ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            choisirUnEmployer_ComboBox.SelectedValue = "";
+
+        }
+
+        private void ajouterImputation_Button_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
