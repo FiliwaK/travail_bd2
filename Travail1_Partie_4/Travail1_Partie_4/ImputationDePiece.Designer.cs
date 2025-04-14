@@ -42,9 +42,9 @@
             groupBox2 = new GroupBox();
             comboBox1 = new ComboBox();
             label2 = new Label();
-            choisrUnProjet_omboBox = new ComboBox();
+            choisirUnProjet_ComboBox = new ComboBox();
             label_projet = new Label();
-            ajouterEmputation_Button = new Button();
+            ajouterImputation_Button = new Button();
             quantite_NumericUpDown = new NumericUpDown();
             label4 = new Label();
             groupBox1.SuspendLayout();
@@ -93,6 +93,7 @@
             selectionner_DataGridView.Name = "selectionner_DataGridView";
             selectionner_DataGridView.Size = new Size(502, 130);
             selectionner_DataGridView.TabIndex = 4;
+            selectionner_DataGridView.Click += selectionner_DataGridView_Click;
             // 
             // label1
             // 
@@ -132,6 +133,7 @@
             choisirEmployer_Button.TabIndex = 7;
             choisirEmployer_Button.Text = "Choisr un employer";
             choisirEmployer_Button.UseVisualStyleBackColor = true;
+            choisirEmployer_Button.Click += choisirEmployer_Button_Click;
             // 
             // choisirUnEmployer_ComboBox
             // 
@@ -153,7 +155,7 @@
             // projet_GroupBox
             // 
             projet_GroupBox.Controls.Add(groupBox2);
-            projet_GroupBox.Controls.Add(choisrUnProjet_omboBox);
+            projet_GroupBox.Controls.Add(choisirUnProjet_ComboBox);
             projet_GroupBox.Controls.Add(label_projet);
             projet_GroupBox.Location = new Point(23, 252);
             projet_GroupBox.Name = "projet_GroupBox";
@@ -190,13 +192,13 @@
             label2.TabIndex = 5;
             label2.Text = "Choisir un projet";
             // 
-            // choisrUnProjet_omboBox
+            // choisirUnProjet_ComboBox
             // 
-            choisrUnProjet_omboBox.FormattingEnabled = true;
-            choisrUnProjet_omboBox.Location = new Point(237, 31);
-            choisrUnProjet_omboBox.Name = "choisrUnProjet_omboBox";
-            choisrUnProjet_omboBox.Size = new Size(317, 23);
-            choisrUnProjet_omboBox.TabIndex = 6;
+            choisirUnProjet_ComboBox.FormattingEnabled = true;
+            choisirUnProjet_ComboBox.Location = new Point(237, 31);
+            choisirUnProjet_ComboBox.Name = "choisirUnProjet_ComboBox";
+            choisirUnProjet_ComboBox.Size = new Size(317, 23);
+            choisirUnProjet_ComboBox.TabIndex = 6;
             // 
             // label_projet
             // 
@@ -207,14 +209,15 @@
             label_projet.TabIndex = 5;
             label_projet.Text = "Choisir un projet";
             // 
-            // ajouterEmputation_Button
+            // ajouterImputation_Button
             // 
-            ajouterEmputation_Button.Location = new Point(227, 497);
-            ajouterEmputation_Button.Name = "ajouterEmputation_Button";
-            ajouterEmputation_Button.Size = new Size(142, 27);
-            ajouterEmputation_Button.TabIndex = 9;
-            ajouterEmputation_Button.Text = "Ajouter une emputation";
-            ajouterEmputation_Button.UseVisualStyleBackColor = true;
+            ajouterImputation_Button.Location = new Point(227, 497);
+            ajouterImputation_Button.Name = "ajouterImputation_Button";
+            ajouterImputation_Button.Size = new Size(142, 27);
+            ajouterImputation_Button.TabIndex = 9;
+            ajouterImputation_Button.Text = "Ajouter une imputation";
+            ajouterImputation_Button.UseVisualStyleBackColor = true;
+            ajouterImputation_Button.Click += ajouterImputation_Button_Click;
             // 
             // quantite_NumericUpDown
             // 
@@ -238,7 +241,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(901, 554);
             Controls.Add(quantite_NumericUpDown);
-            Controls.Add(ajouterEmputation_Button);
+            Controls.Add(ajouterImputation_Button);
             Controls.Add(label4);
             Controls.Add(groupBox3);
             Controls.Add(projet_GroupBox);
@@ -275,9 +278,9 @@
         private GroupBox groupBox2;
         private ComboBox comboBox1;
         private Label label2;
-        private ComboBox choisrUnProjet_omboBox;
+        private ComboBox choisirUnProjet_ComboBox;
         private Label label_projet;
-        private Button ajouterEmputation_Button;
+        private Button ajouterImputation_Button;
         private NumericUpDown quantite_NumericUpDown;
         private Label label4;
     }

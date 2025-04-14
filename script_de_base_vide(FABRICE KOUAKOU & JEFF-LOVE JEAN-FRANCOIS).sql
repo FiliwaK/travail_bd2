@@ -26,17 +26,17 @@ go
 
 /* voici le code permettant de donner les droits à un autre usager, ici nommé [sonNoDa] */
 /* création de l'usager */
-<<<<<<< Updated upstream
-CREATE USER [Kouakou Filiwa Fabrice Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
-GO
-/* spécification de ses droits*/
-ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
-=======
+
+--CREATE USER [Kouakou Filiwa Fabrice Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
+--GO
+--/* spécification de ses droits*/
+--ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
+
 CREATE USER [Jeff love Jean Francois] FOR LOGIN [corporatif\2334062] WITH DEFAULT_SCHEMA=[dbo]
 GO
 /* spécification de ses droits*/
 ALTER ROLE [db_owner] ADD MEMBER [Jeff love Jean Francois]
->>>>>>> Stashed changes
+
 GO
 
 /* création de vos tables simples */
@@ -407,22 +407,38 @@ go
 
 
 
-<<<<<<< Updated upstream
-GO
-=======
->>>>>>> Stashed changes
+
 CREATE OR ALTER PROCEDURE RechercherPieceParNumeroIndustrie
     @noIndustrie NVARCHAR(100)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     SELECT numeroIndustrie, description
     FROM tbl_piece
     WHERE numeroIndustrie LIKE '%' + @noIndustrie + '%'
     ORDER BY numeroIndustrie;
 END
 GO
+
+
+CREATE OR ALTER PROCEDURE RechercherProjetsParNumeroIndustrie
+    @numeroIndustrie NVARCHAR(200)
+AS
+BEGIN
+    SELECT 
+        p.id_projet,
+        p.nom AS nom_projet,
+        p.description AS description_projet
+    FROM tbl_piece pi
+    INNER JOIN tbl_stock s ON pi.id_piece = s.id_piece
+    INNER JOIN tbl_projet p ON s.id_projet = p.id_projet
+    WHERE pi.numeroIndustrie LIKE '%' + @numeroIndustrie + '%'
+    ORDER BY p.nom;
+END
+GO
+
+
+
+
 
 
 

@@ -69,5 +69,32 @@ namespace Travail1_Partie_4.Models
 
             return _;
         }
+
+        public virtual async Task<List<RechercherProjetsParNumeroIndustrieResult>> RechercherProjetsParNumeroIndustrieAsync(string numeroIndustrie, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "numeroIndustrie",
+                    Size = 400,
+                    Value = numeroIndustrie ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<RechercherProjetsParNumeroIndustrieResult>("EXEC @returnValue = [dbo].[RechercherProjetsParNumeroIndustrie] @numeroIndustrie = @numeroIndustrie", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
     }
 }

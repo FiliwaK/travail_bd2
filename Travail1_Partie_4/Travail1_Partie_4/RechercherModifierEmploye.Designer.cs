@@ -44,12 +44,14 @@
             label5 = new Label();
             label6 = new Label();
             label7 = new Label();
+            selectionnerEmployeButton = new Button();
             Recherche.SuspendLayout();
             Modifier.SuspendLayout();
             SuspendLayout();
             // 
             // Recherche
             // 
+            Recherche.Controls.Add(selectionnerEmployeButton);
             Recherche.Controls.Add(RechercherButon);
             Recherche.Controls.Add(selectionnerEmploye_ComboBox);
             Recherche.Controls.Add(entrerNom_TextBox);
@@ -57,7 +59,7 @@
             Recherche.Controls.Add(label2);
             Recherche.Location = new Point(12, 12);
             Recherche.Name = "Recherche";
-            Recherche.Size = new Size(760, 197);
+            Recherche.Size = new Size(760, 208);
             Recherche.TabIndex = 0;
             Recherche.TabStop = false;
             Recherche.Text = "Recherche un employer";
@@ -117,7 +119,7 @@
             Modifier.Controls.Add(label5);
             Modifier.Controls.Add(label6);
             Modifier.Controls.Add(label7);
-            Modifier.Location = new Point(12, 215);
+            Modifier.Location = new Point(12, 226);
             Modifier.Name = "Modifier";
             Modifier.Size = new Size(760, 223);
             Modifier.TabIndex = 1;
@@ -198,6 +200,16 @@
             label7.TabIndex = 6;
             label7.Text = "No employe";
             // 
+            // selectionnerEmployeButton
+            // 
+            selectionnerEmployeButton.Location = new Point(522, 179);
+            selectionnerEmployeButton.Name = "selectionnerEmployeButton";
+            selectionnerEmployeButton.Size = new Size(206, 23);
+            selectionnerEmployeButton.TabIndex = 6;
+            selectionnerEmployeButton.Text = "Selectionner employe";
+            selectionnerEmployeButton.UseVisualStyleBackColor = true;
+            selectionnerEmployeButton.Click += selectionnerEmployeButton_Click;
+            // 
             // RechercherModifierEmploye
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -233,5 +245,6 @@
         private Label label7;
         private Button RechercherButon;
         private Button modifierButon;
+        private Button selectionnerEmployeButton;
     }
 }

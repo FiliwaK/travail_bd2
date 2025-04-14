@@ -41,6 +41,10 @@
       {
          "Name": "[dbo].[RechercherPieceParNumeroIndustrie]",
          "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[RechercherProjetsParNumeroIndustrie]",
+         "ObjectType": 1
       }
    ],
    "UiHint": null,
