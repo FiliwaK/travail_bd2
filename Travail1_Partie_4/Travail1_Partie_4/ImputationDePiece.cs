@@ -98,6 +98,7 @@ namespace Travail1_Partie_4
             choisirUnEmployer_ComboBox.DataSource = null;
             choisirUnProjet_ComboBox.DataSource = null;
             selectionner_DataGridView.DataSource = null;
+            numeroPiece_TextBox.Text = "";
             quantite_NumericUpDown.Value = 0;
         }
 
