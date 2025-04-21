@@ -63,6 +63,7 @@
             lesDonneesLieesToolStripMenuItem.Name = "lesDonneesLieesToolStripMenuItem";
             lesDonneesLieesToolStripMenuItem.Size = new Size(118, 20);
             lesDonneesLieesToolStripMenuItem.Text = "Les_Donnees_Liees";
+            lesDonneesLieesToolStripMenuItem.Click += lesDonneesLieesToolStripMenuItem_Click;
             // 
             // MenuForm
             // 

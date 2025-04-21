@@ -28,5 +28,11 @@ namespace Travail1_Partie_4
             var maForme = new ImputationDePiece();
             maForme.ShowDialog();
         }
+
+        private void lesDonneesLieesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var maForme = new LesDonneesLiees();
+            maForme.ShowDialog();
+        }
     }
 }
