@@ -30,5 +30,14 @@ namespace Travail1_Partie_4.Manager
             }
             return listeDesProjets;
         }
+
+        public async Task AjouterImputation(int noEmploye, int noProjet, int noPiece, int quantiteImputee, DateTime dateImputation)
+        {
+            using (var context = new Bd_ReseauContext())
+            {
+                await context.Procedures.AjouterImputationAsync(noEmploye, noProjet, noPiece, quantiteImputee, dateImputation);
+            }
+        }
+
     }
 }

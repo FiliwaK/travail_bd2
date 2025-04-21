@@ -82,7 +82,38 @@ namespace Travail1_Partie_4
 
         private void ajouterImputation_Button_Click(object sender, EventArgs e)
         {
+            try
+            {
+                // Vérification de tous les champs requis
+                if (choisirUnEmployer_ComboBox.SelectedItem == null ||
+                    choisirUnProjet_ComboBox.SelectedItem == null ||
+                    selectionner_DataGridView.CurrentRow == null ||
+                    string.IsNullOrWhiteSpace(quantite_TextBox.Text))
+                {
+                    MessageBox.Show("Veuillez remplir tous les champs avant d'ajouter l'imputation.");
+                    return;
+                }
 
+                int noEmploye = (int)choisirUnEmployer_ComboBox.SelectedValue;
+                int noProjet = (int)choisirUnProjet_ComboBox.SelectedValue;
+                int noPiece = (int)selectionner_DataGridView[1, selectionner_DataGridView.CurrentRow.Index].Value; // colonne id interne
+                int quantiteImputee = int.Parse(quantite_TextBox.Text);
+                DateTime dateImputation = DateTime.Today;
+
+                // Appel du manager
+                var managerPiece = new ManagerPiece();
+                await managerPiece.AjouterImputation(noEmploye, noProjet, noPiece, quantiteImputee, dateImputation);
+
+                MessageBox.Show("Imputation effectuée avec succès.");
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Quantité invalide. Veuillez entrer un nombre entier.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'imputation : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
