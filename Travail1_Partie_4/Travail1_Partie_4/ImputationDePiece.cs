@@ -60,7 +60,7 @@ namespace Travail1_Partie_4
         private async void selectionner_DataGridView_Click(object sender, EventArgs e)
         {
             ManagerPiece managerPiece = new ManagerPiece();
-            string noPiece = (string)selectionner_DataGridView[0, selectionner_DataGridView.CurrentRow.Index].Value;
+            string noPiece = (string)selectionner_DataGridView[1, selectionner_DataGridView.CurrentRow.Index].Value;
             projets = await managerPiece.ListerProjet(noPiece);
             RemplirProjetComboBox();
         }
@@ -80,36 +80,55 @@ namespace Travail1_Partie_4
 
         }
 
-        private void ajouterImputation_Button_Click(object sender, EventArgs e)
+        public bool ChampsRemplit()
+        {
+            return (
+                choisirUnEmployer_ComboBox.SelectedItem != null &&
+                choisirUnProjet_ComboBox.SelectedItem != null &&
+                selectionner_DataGridView.CurrentRow != null &&
+                quantite_NumericUpDown.Value > 0
+            );
+        }
+
+        private void ViderLesChampsImputation()
+        {
+            choisirUnEmployer_ComboBox.DataSource = null;
+            choisirUnProjet_ComboBox.DataSource = null;
+            selectionner_DataGridView.DataSource = null;
+            quantite_NumericUpDown.Value = 0;
+        }
+
+
+        private async void ajouterImputation_Button_Click(object sender, EventArgs e)
         {
             try
             {
-                // Vérification de tous les champs requis
-                if (choisirUnEmployer_ComboBox.SelectedItem == null ||
-                    choisirUnProjet_ComboBox.SelectedItem == null ||
-                    selectionner_DataGridView.CurrentRow == null ||
-                    string.IsNullOrWhiteSpace(quantite_TextBox.Text))
+                if (!ChampsRemplit())
                 {
                     MessageBox.Show("Veuillez remplir tous les champs avant d'ajouter l'imputation.");
                     return;
                 }
 
+                //var pieceSelectionnee = (RechercherPieceParNumeroIndustrieResult)selectionner_DataGridView.CurrentRow.DataBoundItem;
+
+
+                //int noPiece = pieceSelectionnee.id_piece; 
+
+
                 int noEmploye = (int)choisirUnEmployer_ComboBox.SelectedValue;
                 int noProjet = (int)choisirUnProjet_ComboBox.SelectedValue;
-                int noPiece = (int)selectionner_DataGridView[1, selectionner_DataGridView.CurrentRow.Index].Value; // colonne id interne
-                int quantiteImputee = int.Parse(quantite_TextBox.Text);
+                int noPiece = (int)selectionner_DataGridView[0, selectionner_DataGridView.CurrentRow.Index].Value;
+                int quantiteImputee = (int)quantite_NumericUpDown.Value;
                 DateTime dateImputation = DateTime.Today;
 
-                // Appel du manager
                 var managerPiece = new ManagerPiece();
-                await managerPiece.AjouterImputation(noEmploye, noProjet, noPiece, quantiteImputee, dateImputation);
+
+                await managerPiece.AjouterImputationAvecUpdateStock(noEmploye, noProjet, noPiece, quantiteImputee, dateImputation);
 
                 MessageBox.Show("Imputation effectuée avec succès.");
+                ViderLesChampsImputation();
             }
-            catch (FormatException)
-            {
-                MessageBox.Show("Quantité invalide. Veuillez entrer un nombre entier.");
-            }
+
             catch (Exception ex)
             {
                 MessageBox.Show($"Erreur lors de l'imputation : {ex.Message}", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);

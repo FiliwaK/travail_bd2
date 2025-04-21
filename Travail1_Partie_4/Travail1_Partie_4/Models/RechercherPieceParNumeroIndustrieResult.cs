@@ -8,6 +8,7 @@ namespace Travail1_Partie_4.Models
 {
     public partial class RechercherPieceParNumeroIndustrieResult
     {
+        public int id_piece { get; set; }
         [StringLength(200)]
         public string numeroIndustrie { get; set; }
         [StringLength(200)]

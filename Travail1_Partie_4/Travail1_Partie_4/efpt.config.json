@@ -39,6 +39,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[MettreAJourStock]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[RechercherPieceParNumeroIndustrie]",
          "ObjectType": 1
       },

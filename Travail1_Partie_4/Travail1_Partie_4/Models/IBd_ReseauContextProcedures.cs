@@ -13,6 +13,7 @@ namespace Travail1_Partie_4.Models
 {
     public partial interface IBd_ReseauContextProcedures
     {
+        Task<int> MettreAJourStockAsync(int? id_piece, int? id_projet, int? quantite_impute, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<RechercherPieceParNumeroIndustrieResult>> RechercherPieceParNumeroIndustrieAsync(string noIndustrie, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<RechercherProjetsParNumeroIndustrieResult>> RechercherProjetsParNumeroIndustrieAsync(string numeroIndustrie, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }

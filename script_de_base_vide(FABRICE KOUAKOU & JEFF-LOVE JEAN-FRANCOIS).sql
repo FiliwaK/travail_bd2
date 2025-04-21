@@ -412,7 +412,7 @@ CREATE OR ALTER PROCEDURE RechercherPieceParNumeroIndustrie
     @noIndustrie NVARCHAR(100)
 AS
 BEGIN
-    SELECT numeroIndustrie, description
+    SELECT id_piece ,numeroIndustrie, description
     FROM tbl_piece
     WHERE numeroIndustrie LIKE '%' + @noIndustrie + '%'
     ORDER BY numeroIndustrie;
@@ -436,7 +436,76 @@ BEGIN
 END
 GO
 
+CREATE OR ALTER PROCEDURE AjouterImputation
+    @id_employee INT,
+    @id_piece INT,
+    @id_projet INT,
+    @quantite_impute INT,
+    @date_imputee DATE = NULL
+AS
+BEGIN
 
+    IF @date_imputee IS NULL
+        SET @date_imputee = GETDATE();
+
+    SET NOCOUNT ON;
+
+    DECLARE @id_stock INT;
+
+    SELECT @id_stock = id_stock
+    FROM tbl_stock
+    WHERE id_piece = @id_piece AND id_projet = @id_projet;
+
+
+    IF @id_stock IS NOT NULL
+    BEGIN
+        BEGIN TRANSACTION;
+
+
+        INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
+        VALUES (@id_employee, @id_stock, @quantite_impute, @date_imputee);
+
+
+        UPDATE tbl_stock
+        SET quantite_stock = quantite_stock - @quantite_impute
+        WHERE id_stock = @id_stock;
+
+        COMMIT TRANSACTION;
+    END
+END
+GO
+
+
+EXEC AjouterImputation 
+    @id_employee = 5, 
+    @id_piece = 3, 
+    @id_projet = 2, 
+    @quantite_impute = 7;
+go
+
+
+CREATE OR ALTER PROCEDURE MettreAJourStock
+    @id_piece INT,
+    @id_projet INT,
+    @quantite_impute INT
+AS
+BEGIN
+
+IF EXISTS (
+        SELECT 1 FROM tbl_stock 
+        WHERE id_piece = @id_piece 
+        AND id_projet = @id_projet 
+        AND quantite_stock < @quantite_impute
+    )
+    BEGIN
+        RAISERROR('Quantité demandée dépasse le stock disponible.', 50001, 1);
+        RETURN;
+    END
+
+    UPDATE tbl_stock
+    SET quantite_stock = quantite_stock - @quantite_impute
+    WHERE id_piece = @id_piece AND id_projet = @id_projet;
+END
 
 
 

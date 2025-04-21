@@ -37,17 +37,17 @@ public partial class Bd_ReseauContext : DbContext
     {
         modelBuilder.Entity<TblCompagnie>(entity =>
         {
-            entity.HasKey(e => e.IdCompagnie).HasName("PK__tbl_comp__517CB383526E3185");
+            entity.HasKey(e => e.IdCompagnie).HasName("PK__tbl_comp__517CB383612CA6AB");
         });
 
         modelBuilder.Entity<TblEmployee>(entity =>
         {
-            entity.HasKey(e => e.IdEmployee).HasName("PK__tbl_empl__F807679C1EBEBD5C");
+            entity.HasKey(e => e.IdEmployee).HasName("PK__tbl_empl__F807679CFBA6A795");
         });
 
         modelBuilder.Entity<TblImpute>(entity =>
         {
-            entity.HasKey(e => e.IdImpute).HasName("PK__tbl_impu__AD6F00C0AE557B07");
+            entity.HasKey(e => e.IdImpute).HasName("PK__tbl_impu__AD6F00C0BC56D0C6");
 
             entity.HasOne(d => d.IdEmployeeNavigation).WithMany(p => p.TblImputes)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -60,12 +60,12 @@ public partial class Bd_ReseauContext : DbContext
 
         modelBuilder.Entity<TblPiece>(entity =>
         {
-            entity.HasKey(e => e.IdPiece).HasName("PK__tbl_piec__D20D1E0AD0287522");
+            entity.HasKey(e => e.IdPiece).HasName("PK__tbl_piec__D20D1E0A319FCD52");
         });
 
         modelBuilder.Entity<TblProjet>(entity =>
         {
-            entity.HasKey(e => e.IdProjet).HasName("PK__tbl_proj__36C5661DB8280805");
+            entity.HasKey(e => e.IdProjet).HasName("PK__tbl_proj__36C5661D60ECBB28");
 
             entity.HasOne(d => d.IdCompagnieNavigation).WithMany(p => p.TblProjets)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -74,7 +74,7 @@ public partial class Bd_ReseauContext : DbContext
 
         modelBuilder.Entity<TblStock>(entity =>
         {
-            entity.HasKey(e => e.IdStock).HasName("PK__tbl_stoc__3A39590ACFBF5FF4");
+            entity.HasKey(e => e.IdStock).HasName("PK__tbl_stoc__3A39590AB42A8B12");
 
             entity.HasOne(d => d.IdPieceNavigation).WithMany(p => p.TblStocks)
                 .OnDelete(DeleteBehavior.ClientSetNull)
