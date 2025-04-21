@@ -98,6 +98,7 @@ namespace Travail1_Partie_4
             nom_TextBox.Clear();
             prenom_TextBox.Clear();
             email_TextBox.Clear();
+            entrerNom_TextBox.Clear();
         }
 
         public TblEmployee RemplirLesInformations()
