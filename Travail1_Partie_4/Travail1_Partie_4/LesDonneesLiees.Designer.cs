@@ -92,7 +92,7 @@
             button_Rechercher.Name = "button_Rechercher";
             button_Rechercher.Size = new Size(124, 55);
             button_Rechercher.TabIndex = 10;
-            button_Rechercher.Text = "Recherche explicyt lodding";
+            button_Rechercher.Text = "Recherche explicyt loading";
             button_Rechercher.UseVisualStyleBackColor = true;
             button_Rechercher.Click += button_Rechercher_Click;
             // 
@@ -177,7 +177,7 @@
             button_Recherchee.Name = "button_Recherchee";
             button_Recherchee.Size = new Size(111, 45);
             button_Recherchee.TabIndex = 6;
-            button_Recherchee.Text = "Recherche eagle lodding";
+            button_Recherchee.Text = "Recherche eagle loading";
             button_Recherchee.UseVisualStyleBackColor = true;
             button_Recherchee.Click += button_Recherchee_Click;
             // 
