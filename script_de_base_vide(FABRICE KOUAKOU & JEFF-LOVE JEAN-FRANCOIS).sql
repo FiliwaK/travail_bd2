@@ -449,6 +449,47 @@ BEGIN
     SET quantite_stock = quantite_stock - @quantite_impute
     WHERE id_piece = @id_piece AND id_projet = @id_projet;
 END
+go
+
+
+
+
+
+
+CREATE or alter VIEW VueListerQuantitePrevueProjet
+AS
+SELECT 
+    s.id_stock,
+    p.id_projet,
+    p.nom AS nom_projet,
+    pi.id_piece,
+    pi.description AS nom_piece,
+    s.quantite_prevu
+FROM 
+    tbl_stock s
+INNER JOIN 
+    tbl_projet p ON s.id_projet = p.id_projet
+INNER JOIN 
+    tbl_piece pi ON s.id_piece = pi.id_piece
+GO
+
+
+CREATE or alter PROCEDURE ModifierQuantitePrevueProjet
+    @id_stock INT,
+    @id_projet INT,
+    @nom_projet NVARCHAR(200),
+    @id_piece INT,
+    @nom_piece NVARCHAR(200),
+    @quantite_prevu INT
+AS
+BEGIN
+    UPDATE VueListerQuantitePrevueProjet
+    SET quantite_prevu = @quantite_prevu
+    WHERE id_stock = @id_stock
+END
+GO
+
+
 
 
 

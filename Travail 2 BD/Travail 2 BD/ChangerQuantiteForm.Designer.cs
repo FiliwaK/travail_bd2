@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
-            label1 = new Label();
             nomProjetComboBox = new ComboBox();
+            label1 = new Label();
             pieceDataGridView = new DataGridView();
             label2 = new Label();
             groupBox1.SuspendLayout();
@@ -48,6 +48,15 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Rechercher Un Projet";
             // 
+            // nomProjetComboBox
+            // 
+            nomProjetComboBox.FormattingEnabled = true;
+            nomProjetComboBox.Location = new Point(138, 33);
+            nomProjetComboBox.Name = "nomProjetComboBox";
+            nomProjetComboBox.Size = new Size(470, 23);
+            nomProjetComboBox.TabIndex = 1;
+            nomProjetComboBox.SelectionChangeCommitted += nomProjetComboBox_SelectionChangeCommitted;
+            // 
             // label1
             // 
             label1.AutoSize = true;
@@ -56,14 +65,6 @@
             label1.Size = new Size(85, 15);
             label1.TabIndex = 0;
             label1.Text = "Nom du projet";
-            // 
-            // nomProjetComboBox
-            // 
-            nomProjetComboBox.FormattingEnabled = true;
-            nomProjetComboBox.Location = new Point(138, 33);
-            nomProjetComboBox.Name = "nomProjetComboBox";
-            nomProjetComboBox.Size = new Size(470, 23);
-            nomProjetComboBox.TabIndex = 1;
             // 
             // pieceDataGridView
             // 
@@ -92,6 +93,7 @@
             Controls.Add(groupBox1);
             Name = "ChangerQuantiteForm";
             Text = "ChangerQuantiteForm";
+            Load += ChangerQuantiteForm_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pieceDataGridView).EndInit();
