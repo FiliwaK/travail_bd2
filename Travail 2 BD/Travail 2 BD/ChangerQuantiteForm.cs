@@ -39,6 +39,16 @@ namespace Travail_2_BD
         private void ChangerQuantiteForm_Load(object sender, EventArgs e)
         {
             RemplirComboBoxProjet();
+
+        }
+
+        private void remplirDataGridView()
+        {
+            pieceDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            pieceDataGridView.Columns["IdStock"].Visible = false;
+            pieceDataGridView.Columns["IdProjet"].Visible = false;
+            pieceDataGridView.Columns["NomProjet"].Visible = false;
+            pieceDataGridView.Columns["IdPiece"].Visible = false;
         }
 
         private void nomProjetComboBox_SelectionChangeCommitted(object sender, EventArgs e)
@@ -46,6 +56,19 @@ namespace Travail_2_BD
             int noProjet = (int)nomProjetComboBox.SelectedValue;
             projetSelectionne = projets.FirstOrDefault(p => p.IdProjet == noProjet);
             pieceDataGridView.DataSource = managerProjet.ListerPieces(noProjet);
+            remplirDataGridView();
+        }
+
+        private void pieceDataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            try
+            {
+                int nombreLigneAffectee = managerProjet.EnregistrerChangementDeQuantite();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

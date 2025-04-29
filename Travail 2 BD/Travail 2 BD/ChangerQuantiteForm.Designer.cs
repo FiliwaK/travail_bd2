@@ -73,6 +73,7 @@
             pieceDataGridView.Name = "pieceDataGridView";
             pieceDataGridView.Size = new Size(718, 275);
             pieceDataGridView.TabIndex = 1;
+            pieceDataGridView.CellEndEdit += pieceDataGridView_CellEndEdit;
             // 
             // label2
             // 

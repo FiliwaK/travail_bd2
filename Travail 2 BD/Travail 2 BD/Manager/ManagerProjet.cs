@@ -34,5 +34,32 @@ namespace Travail_2_BD.Manager
 
             return Context.VueListerQuantitePrevueProjets.Where(l => l.IdProjet == projetSelectionne).OrderBy(p => p.NomProjet).ToList();      
         }
+
+        public int EnregistrerChangementDeQuantite()
+        {
+            int nombreLigne = 0;
+            try
+            {
+                nombreLigne = Context.SaveChanges();
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+            {
+                //if (ex.InnerException is SqlException sqlException)
+                {
+                    if (ex.InnerException.Message.Contains("CHECK") && ex.InnerException.Message.Contains("quantite_prevu"))
+                    {
+                        MessageBox.Show("La quantite que vous demander est superieur a la quantite prevu");
+                        var ligneErreur = ex.Entries.Single();
+                        ligneErreur.Property("QuantitePrevu").CurrentValue = ligneErreur.Property("QuantitePrevu").OriginalValue;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return nombreLigne;
+        }
     }
 }
