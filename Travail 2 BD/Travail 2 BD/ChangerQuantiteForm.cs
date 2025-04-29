@@ -29,6 +29,8 @@ namespace Travail_2_BD
             nomProjetComboBox.DataSource = projets;
             nomProjetComboBox.ValueMember = "IdProjet";
             nomProjetComboBox.DisplayMember = "Nom";
+            nomProjetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            nomProjetComboBox.SelectedValue = "";
         }
 
         private void nomProjetComboBox_SelectedIndexChanged(object sender, EventArgs e)
