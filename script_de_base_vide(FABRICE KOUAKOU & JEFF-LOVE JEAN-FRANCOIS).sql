@@ -4,19 +4,19 @@
 
 
 /* PARTIE 2 */
-/* détruit la bd si elle existe */
+/* dï¿½truit la bd si elle existe */
 
 use master
 go
 IF EXISTS (SELECT name FROM sys.databases WHERE name = 'Bd_Reseau')
 BEGIN
-    ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    --ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 	drop database Bd_Reseau
 END
 
 
 
-/* création de votre bd  */
+/* crï¿½ation de votre bd  */
 
 CREATE DATABASE Bd_Reseau
 go
@@ -24,22 +24,22 @@ go
 Use Bd_Reseau
 go
 
-/* voici le code permettant de donner les droits à un autre usager, ici nommé [sonNoDa] */
-/* création de l'usager */
+/* voici le code permettant de donner les droits ï¿½ un autre usager, ici nommï¿½ [sonNoDa] */
+/* crï¿½ation de l'usager */
 
 --CREATE USER [Kouakou Filiwa Fabrice Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
 --GO
---/* spécification de ses droits*/
+--/* spï¿½cification de ses droits*/
 --ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
 
 CREATE USER [Filiwa Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
 GO
-/* spécification de ses droits*/
+/* spï¿½cification de ses droits*/
 ALTER ROLE [db_owner] ADD MEMBER [Filiwa Leonce]
 
 GO
 
-/* création de vos tables simples */
+/* crï¿½ation de vos tables simples */
 
 create table tbl_compagnie(
 id_compagnie int identity primary key,
@@ -79,8 +79,8 @@ go
 
 
 
-/*	4- Cas òu toutes les contraintes sont définis DANS le create de la table, 
-	auncune contrainte après le create (dans le cas d'une table avec une clé étrangère) */
+/*	4- Cas ï¿½u toutes les contraintes sont dï¿½finis DANS le create de la table, 
+	auncune contrainte aprï¿½s le create (dans le cas d'une table avec une clï¿½ ï¿½trangï¿½re) */
 
 	create table tbl_projet(
 	id_projet int identity primary key,
@@ -103,9 +103,9 @@ go
 	go
 
 
-/*  5- Cas où toutes les contraintes sont définis APRÈS la creation de la table (dans le cas d'une table avec clé étrangère)*/
+/*  5- Cas oï¿½ toutes les contraintes sont dï¿½finis APRï¿½S la creation de la table (dans le cas d'une table avec clï¿½ ï¿½trangï¿½re)*/
 	
-		/* contraintes APRES la céation de la dernière table */
+		/* contraintes APRES la cï¿½ation de la derniï¿½re table */
 
 		create table tbl_impute(
 		id_impute int identity primary key, 
@@ -127,22 +127,22 @@ go
 
  --pour ajouter les piece il faut prendre ceux qui n'ont pas de generique 
   
-/* 10-m'assure qu'il n'y a pas 2 pièces pareils pour un projet */ --voir question 4
-/* 11- unicité */ --voir question 4
+/* 10-m'assure qu'il n'y a pas 2 piï¿½ces pareils pour un projet */ --voir question 4
+/* 11- unicitï¿½ */ --voir question 4
 
 
 /* PARTIE 3 */
-/* 2. a) insertion de données en batch à partir de bdDonnee pour les employes */
+/* 2. a) insertion de donnï¿½es en batch ï¿½ partir de bdDonnee pour les employes */
 
-insert into tbl_employee(prenom, nom, email) select Prénom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
+insert into tbl_employee(prenom, nom, email) select Prï¿½nom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
 go
 
-/* 2. b) insertion de données en batch à partir de bdDonnee pour les pieces de votre sujet */
+/* 2. b) insertion de donnï¿½es en batch ï¿½ partir de bdDonnee pour les pieces de votre sujet */
 
-insert into tbl_piece(description, numeroIndustrie) select Description, [Numéro de Pièce] from BDDonneesTP.DBO.reseau$
+insert into tbl_piece(description, numeroIndustrie) select Description, [Numï¿½ro de Piï¿½ce] from BDDonneesTP.DBO.reseau$
 go
 
-/* 2. c) pratique cross apply : trouver les employés qui ont un nom et prénom identique à d’autres. */
+/* 2. c) pratique cross apply : trouver les employï¿½s qui ont un nom et prï¿½nom identique ï¿½ dï¿½autres. */
 
 
 
@@ -155,9 +155,9 @@ and tbl_employee.id_employee <> e.id_employee) employeeIdentique
 ORDER BY e.nom, e.prenom;
 go
 
-/* 3. ajout de données, au moins 3 dans chaque table */
+/* 3. ajout de donnï¿½es, au moins 3 dans chaque table */
 
-/* 3. a)	Pour la table de projet, ajouter 4 données dont 2 pour la même compagnie */
+/* 3. a)	Pour la table de projet, ajouter 4 donnï¿½es dont 2 pour la mï¿½me compagnie */
 
 INSERT INTO tbl_compagnie (nom) VALUES
 ('HyperNet Solutions'),
@@ -197,8 +197,8 @@ where c.nom = 'FiberLink Technologies';
 
 go
 
-/* 3. b)	Pour la table des projets-pièces, faites des ajouts pour 2 projets différents et pour chacun utiliser au moins 3 pièces différentes. 
-			Une même pièce sera dans les 2 projets*/
+/* 3. b)	Pour la table des projets-piï¿½ces, faites des ajouts pour 2 projets diffï¿½rents et pour chacun utiliser au moins 3 piï¿½ces diffï¿½rentes. 
+			Une mï¿½me piï¿½ce sera dans les 2 projets*/
 			
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
 SELECT p.id_projet, pi.id_piece, 55, 100
@@ -215,11 +215,11 @@ WHERE p.nom = 'Projet Beta';
 go
 
 
-/* 3. c)	Pour la table d’imputation, utiliser comme employé, un employé ayant le même nom qu’un autre. 			
-			Pour un même projet,un des employés aura 2 imputations et l’autre une. 
-			Ajouter 3 imputations pour le même projet.
-			Ajouter 2 pièces différentes parmi celles importées et une pareille. Bien entendu, ce doit être les pièces déjà associées à ce projet (projets-pièces). 
-			Assurez-vous que ce soit toujours la date d’aujourd’hui lorsque vous exécutez votre script.
+/* 3. c)	Pour la table dï¿½imputation, utiliser comme employï¿½, un employï¿½ ayant le mï¿½me nom quï¿½un autre. 			
+			Pour un mï¿½me projet,un des employï¿½s aura 2 imputations et lï¿½autre une. 
+			Ajouter 3 imputations pour le mï¿½me projet.
+			Ajouter 2 piï¿½ces diffï¿½rentes parmi celles importï¿½es et une pareille. Bien entendu, ce doit ï¿½tre les piï¿½ces dï¿½jï¿½ associï¿½es ï¿½ ce projet (projets-piï¿½ces). 
+			Assurez-vous que ce soit toujours la date dï¿½aujourdï¿½hui lorsque vous exï¿½cutez votre script.
 			*/
 
 
@@ -230,7 +230,7 @@ INSERT INTO [dbo].[tbl_impute]
 
 
 select (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = 'Émilie' 
+AND e1.prenom = 'ï¿½milie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 from tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -241,7 +241,7 @@ and tbl_stock.id_projet in (select tbl_projet.id_projet from tbl_projet where no
 UNION ALL
 
 SELECT (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = 'Émilie' 
+AND e1.prenom = 'ï¿½milie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 FROM tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -261,7 +261,7 @@ INNER JOIN tbl_stock ON tbl_stock.id_projet = (SELECT id_projet FROM tbl_projet 
 INNER JOIN tbl_piece ON tbl_piece.id_piece = tbl_stock.id_piece
 WHERE tbl_stock.id_piece IN (SELECT id_piece FROM tbl_piece WHERE description = 'Netgear Nighthawk RAX120')
 AND e1.nom = 'Tremblay' 
-AND e1.prenom = 'Émilie'
+AND e1.prenom = 'ï¿½milie'
 
 go
 
@@ -269,7 +269,7 @@ go
 
 
 
-/* c) même chose pour un 2e projet */ 
+/* c) mï¿½me chose pour un 2e projet */ 
 
 INSERT INTO [dbo].[tbl_impute] 
     ([id_employee], [id_stock], [quantite_impute], [date_imputee])
@@ -326,9 +326,9 @@ FROM            tbl_projet INNER JOIN
 
 go
 
-/* 5.	Faites une instruction SQL qui vous affiche, pour chaque pièce, le nombre d’imputations réalisé en tout dans le magasin, 
-		la quantité totale de pièces imputées, 
-		et le nombre de projets dont elle fait partie. (Select avancé).
+/* 5.	Faites une instruction SQL qui vous affiche, pour chaque piï¿½ce, le nombre dï¿½imputations rï¿½alisï¿½ en tout dans le magasin, 
+		la quantitï¿½ totale de piï¿½ces imputï¿½es, 
+		et le nombre de projets dont elle fait partie. (Select avancï¿½).
 */
 
 SELECT 
@@ -383,24 +383,24 @@ go
 
 	--INSERT INTO tbl_impute (id_employee, id_stock, date_imputee) VALUES (1, 1, '2030-01-01')
 	
-/* m'assure qu'il n'y a pas 2 pièces pareils pour un projet */
+/* m'assure qu'il n'y a pas 2 piï¿½ces pareils pour un projet */
 
 	--constraint UQ_projetPiece unique (id_piece, id_projet)
 
 	--INSERT INTO tbl_stock (id_piece, id_projet) VALUES (1, 1)
 	
-/* La description d’un projet ne pourra pas être identique à un autre projet*/
+/* La description dï¿½un projet ne pourra pas ï¿½tre identique ï¿½ un autre projet*/
 
 	--description nvarchar(200) unique voir creation de la table projet plus haut 
 
 	--INSERT INTO tbl_projet (nom, description, id_compagnie) VALUES ('Projet X', 'Description du projet Alpha', 3)
 
-/* le nom de compagnie ne peut pas être identique à une autre compagnie */
+/* le nom de compagnie ne peut pas ï¿½tre identique ï¿½ une autre compagnie */
 
 	--nom nvarchar(200) unique
 	--INSERT INTO tbl_compagnie(nom) VALUES ('HyperNet Solutions')
 
-/* les numéros d’une pièce de l’industrie doivent être tous différents*/
+/* les numï¿½ros dï¿½une piï¿½ce de lï¿½industrie doivent ï¿½tre tous diffï¿½rents*/
 
 	--numeroIndustrie nvarchar(200) unique
 	--INSERT INTO tbl_piece (numeroIndustrie) VALUES ('RAX120-100NAS')
@@ -489,14 +489,20 @@ BEGIN
 END
 GO
 
+create table tbl_inventaireNonAssigne(
+no_inventaireNonAssigne int identity primary key, 
+no_piece int unique , 
+quantitï¿½ int,
+)
+go
 
 
 /* ============================================
-   PARTIE 4 : LES DÉCLENCHEURS (TRIGGER)
-   Objectif : Ne pas dépasser la quantité prévue
+   PARTIE 4 : LES Dï¿½CLENCHEURS (TRIGGER)
+   Objectif : Ne pas dï¿½passer la quantitï¿½ prï¿½vue
    ============================================ */
 
-/* a) Création du déclencheur avec THROW et TRY...CATCH */
+/* a) Crï¿½ation du dï¿½clencheur avec THROW et TRY...CATCH */
 
 CREATE OR ALTER TRIGGER verifiQtePrevu
 ON tbl_stock
@@ -517,7 +523,7 @@ BEGIN
             WHERE i.quantite_prevu < i.quantite_stock + ISNULL(impTotal.totalImpute, 0)
         )
         BEGIN
-            THROW 50001, 'La quantité prévue est dépassée pour ce projet-pièce.', 1;
+            THROW 50001, 'La quantitï¿½ prï¿½vue est dï¿½passï¿½e pour ce projet-piï¿½ce.', 1;
         END
     END TRY
     BEGIN CATCH
@@ -527,7 +533,7 @@ BEGIN
 END;
 GO
 
-/* b) Une pièce dans 2 projets + 2 imputations */
+/* b) Une piï¿½ce dans 2 projets + 2 imputations */
 
 -- Imputation 1 - Projet Alpha
 INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
@@ -548,8 +554,8 @@ GO
 
 /* c) Tests d'ajout */
 
--- Test 1 (Ajout REFUSÉ) : QtePrevue 10, Stock 5, Imputations 6 ? 10 < 5+6=11
--- Calcul : 10 >= (5 + 6 = 11) ? Faux ? REFUSÉ
+-- Test 1 (Ajout REFUSï¿½) : QtePrevue 10, Stock 5, Imputations 6 ? 10 < 5+6=11
+-- Calcul : 10 >= (5 + 6 = 11) ? Faux ? REFUSï¿½
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
 SELECT p.id_projet, pi.id_piece, 10, 5
 FROM tbl_projet p
@@ -557,16 +563,45 @@ inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
 WHERE p.nom = 'Projet Beta';
 
 
--- Test 2 (Ajout ACCEPTÉ) : QtePrevue 20, Stock 5, Imputations 6 ? 20 >= 11
--- Calcul : 20 >= (5 + 6 = 11) ? Vrai ? ACCEPTÉ
+-- Test 2 (Ajout ACCEPTï¿½) : QtePrevue 20, Stock 5, Imputations 6 ? 20 >= 11
+-- Calcul : 20 >= (5 + 6 = 11) ? Vrai ? ACCEPTï¿½
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
 SELECT p.id_projet, pi.id_piece, 20, 5
 FROM tbl_projet p
 inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
 WHERE p.nom = 'Projet Alpha';
+--select * from tbl_inventaireNonAssigne
 
--- Test 3 (Ajout en lot REFUSÉ pour Gamma)
--- Projet Gamma : 10 < 11 (Stock) ? Faux ? REFUSÉ
+
+CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
+    @idProjet int
+AS
+BEGIN TRY
+    SET NOCOUNT ON;
+    
+	BEGIN TRANSACTION;
+
+    BEGIN
+        BEGIN
+            UPDATE tbl_inventaireNonAssigne
+            SET quantitï¿½ = quantitï¿½ + tbl_stock.quantite_stock
+			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet
+        END
+
+        BEGIN
+            INSERT INTO tbl_inventaireNonAssigne (no_piece, quantitï¿½)
+            select tbl_stock.id_piece, tbl_stock.quantite_stock
+			from tbl_inventaireNonAssigne right outer join tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
+        END
+
+    END
+
+-- Test 3 (Ajout en lot REFUSï¿½ pour Gamma)
+-- Projet Gamma : 10 < 11 (Stock) ? Faux ? REFUSï¿½
 -- Projet Delta : 30 >= 10 ? OK (correct)
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
 SELECT p.id_projet, pi.id_piece,
@@ -576,7 +611,7 @@ FROM tbl_projet p
 inner join tbl_piece pi ON pi.description = 'Asus XG-C100C'
 WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
 
--- Test 4 (Ajout en lot ACCEPTÉ)
+-- Test 4 (Ajout en lot ACCEPTï¿½)
 -- Gamma: 20 >= 5, Delta: 40 >= 10 ? OK
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
 SELECT p.id_projet, pi.id_piece,
@@ -586,20 +621,35 @@ FROM tbl_projet p
 inner join tbl_piece pi ON pi.description = 'Belkin Patch Cable Cat6a 1m'
 WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
 GO
+    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
 
 /* d) Tests de modification */
 
--- Modif 1 (REFUSÉE)
--- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imputée 6, Stock 15
--- Calcul : 20 < (15 + 6 = 21) ? Faux ? REFUSÉ
+-- Modif 1 (REFUSï¿½E)
+-- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imputï¿½e 6, Stock 15
+-- Calcul : 20 < (15 + 6 = 21) ? Faux ? REFUSï¿½
 UPDATE tbl_stock
 SET quantite_stock = 15
 WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
   AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
 GO
+    DELETE FROM tbl_Projet WHERE nom = @idProjet;
 
---  Modif 2 (ACCEPTÉE)
--- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imputée 6, Stock 10
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        THROW 51000, 'Problï¿½me durant l''exï¿½cution, la suppression est annulï¿½e.', 1;
+    END
+END CATCH;
+go
+
+exec SupprimerProjetEtRestaurerInventaire 4
+
+--  Modif 2 (ACCEPTï¿½E)
+-- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imputï¿½e 6, Stock 10
 -- Calcul : 20 >= (10 + 6 = 16) ? OK
 UPDATE tbl_stock
 SET quantite_stock = 10
@@ -607,7 +657,7 @@ WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
   AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
 GO
 
---  Modif en lot (REFUSÉE pour Projet Gamma)
+--  Modif en lot (REFUSï¿½E pour Projet Gamma)
 -- Gamma: 10 < 15 ? Faux, Delta: 30 >= 5 ? OK
 UPDATE tbl_stock
 SET quantite_stock = 
@@ -622,7 +672,7 @@ WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Asus XG-C1
   );
 GO
 
--- Modif en lot (ACCEPTÉE)
+-- Modif en lot (ACCEPTï¿½E)
 -- Gamma: 20 >= 10, Delta: 40 >= 15 ? OK
 UPDATE tbl_stock
 SET quantite_stock = 
@@ -636,3 +686,7 @@ WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Belkin Pat
       SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
   );
 GO
+select * from tbl_stock
+select* from tbl_impute
+select* from tbl_projet
+select* from tbl_inventaireNonAssigne
