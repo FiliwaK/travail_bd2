@@ -497,7 +497,7 @@ quantité int,
 go
 
 
-
+--select * from tbl_inventaireNonAssigne
 
 
 CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
@@ -505,13 +505,13 @@ CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
 AS
 BEGIN TRY
     SET NOCOUNT ON;
-    BEGIN TRANSACTION;
+    
+	BEGIN TRANSACTION;
 
-    DECLARE @no_piece INT, @quantite INT;
     BEGIN
         BEGIN
             UPDATE tbl_inventaireNonAssigne
-            SET quantité = quantité + @quantite
+            SET quantité = quantité + tbl_stock.quantite_stock
 			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
 			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
 			where tbl_stock.id_projet = @idProjet
@@ -519,18 +519,19 @@ BEGIN TRY
 
         BEGIN
             INSERT INTO tbl_inventaireNonAssigne (no_piece, quantité)
-            select tbl_inventaireNonAssigne.no_piece, tbl_inventaireNonAssigne.quantité
+            select tbl_stock.id_piece, tbl_stock.quantite_stock
 			from tbl_inventaireNonAssigne right outer join tbl_stock 
 			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
         END
 
     END
 
 
-    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @NomProjet;
+    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
 
 
-    DELETE FROM tbl_Projet WHERE nom = @NomProjet;
+    DELETE FROM tbl_Projet WHERE nom = @idProjet;
 
     COMMIT TRANSACTION;
 END TRY
@@ -541,11 +542,12 @@ BEGIN CATCH
         THROW 51000, 'Problème durant l''exécution, la suppression est annulée.', 1;
     END
 END CATCH;
+go
+
+exec SupprimerProjetEtRestaurerInventaire 4
 
 
-
-
-
-
-
-
+select * from tbl_stock
+select* from tbl_impute
+select* from tbl_projet
+select* from tbl_inventaireNonAssigne
