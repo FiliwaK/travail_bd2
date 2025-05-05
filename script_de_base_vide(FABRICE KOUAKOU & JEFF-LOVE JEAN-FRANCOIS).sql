@@ -10,7 +10,7 @@ use master
 go
 IF EXISTS (SELECT name FROM sys.databases WHERE name = 'Bd_Reseau')
 BEGIN
-    ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    --ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 	drop database Bd_Reseau
 END
 
@@ -489,8 +489,58 @@ BEGIN
 END
 GO
 
+create table tbl_inventaireNonAssigne(
+no_inventaireNonAssigne int identity primary key, 
+no_piece int unique , 
+quantité int,
+)
+go
 
 
+
+
+
+CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
+    @idProjet int
+AS
+BEGIN TRY
+    SET NOCOUNT ON;
+    BEGIN TRANSACTION;
+
+    DECLARE @no_piece INT, @quantite INT;
+    BEGIN
+        BEGIN
+            UPDATE tbl_inventaireNonAssigne
+            SET quantité = quantité + @quantite
+			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet
+        END
+
+        BEGIN
+            INSERT INTO tbl_inventaireNonAssigne (no_piece, quantité)
+            select tbl_inventaireNonAssigne.no_piece, tbl_inventaireNonAssigne.quantité
+			from tbl_inventaireNonAssigne right outer join tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+        END
+
+    END
+
+
+    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @NomProjet;
+
+
+    DELETE FROM tbl_Projet WHERE nom = @NomProjet;
+
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        THROW 51000, 'Problème durant l''exécution, la suppression est annulée.', 1;
+    END
+END CATCH;
 
 
 
