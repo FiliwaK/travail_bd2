@@ -4,13 +4,13 @@
 
 
 /* PARTIE 2 */
-/* d�truit la bd si elle existe */
+/* detruit la bd si elle existe */
 
 use master
 go
 IF EXISTS (SELECT name FROM sys.databases WHERE name = 'Bd_Reseau')
 BEGIN
-    --ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
 	drop database Bd_Reseau
 END
 
@@ -32,10 +32,10 @@ go
 --/* sp�cification de ses droits*/
 --ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
 
-CREATE USER [Filiwa Leonce] FOR LOGIN [corporatif\2342864] WITH DEFAULT_SCHEMA=[dbo]
+CREATE USER [Jeff] FOR LOGIN [corporatif\2334062] WITH DEFAULT_SCHEMA=[dbo]
 GO
 /* sp�cification de ses droits*/
-ALTER ROLE [db_owner] ADD MEMBER [Filiwa Leonce]
+ALTER ROLE [db_owner] ADD MEMBER [Jeff]
 
 GO
 
@@ -134,12 +134,12 @@ go
 /* PARTIE 3 */
 /* 2. a) insertion de donn�es en batch � partir de bdDonnee pour les employes */
 
-insert into tbl_employee(prenom, nom, email) select Pr�nom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
+insert into tbl_employee(prenom, nom, email) select Prénom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
 go
 
 /* 2. b) insertion de donn�es en batch � partir de bdDonnee pour les pieces de votre sujet */
 
-insert into tbl_piece(description, numeroIndustrie) select Description, [Num�ro de Pi�ce] from BDDonneesTP.DBO.reseau$
+insert into tbl_piece(description, numeroIndustrie) select Description, [Numéro de Pièce] from BDDonneesTP.DBO.reseau$
 go
 
 /* 2. c) pratique cross apply : trouver les employ�s qui ont un nom et pr�nom identique � d�autres. */
@@ -230,7 +230,7 @@ INSERT INTO [dbo].[tbl_impute]
 
 
 select (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = '�milie' 
+AND e1.prenom = 'émilie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 from tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -241,7 +241,7 @@ and tbl_stock.id_projet in (select tbl_projet.id_projet from tbl_projet where no
 UNION ALL
 
 SELECT (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = '�milie' 
+AND e1.prenom = 'emilie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 FROM tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -261,7 +261,7 @@ INNER JOIN tbl_stock ON tbl_stock.id_projet = (SELECT id_projet FROM tbl_projet 
 INNER JOIN tbl_piece ON tbl_piece.id_piece = tbl_stock.id_piece
 WHERE tbl_stock.id_piece IN (SELECT id_piece FROM tbl_piece WHERE description = 'Netgear Nighthawk RAX120')
 AND e1.nom = 'Tremblay' 
-AND e1.prenom = '�milie'
+AND e1.prenom = 'emilie'
 
 go
 
@@ -505,27 +505,24 @@ BEGIN TRY
 	BEGIN TRANSACTION;
 
     BEGIN
-        BEGIN
+
             UPDATE tbl_inventaireNonAssigne
             SET quantite = quantite + tbl_stock.quantite_stock
 			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
 			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
 			where tbl_stock.id_projet = @idProjet
-        END
 
-        BEGIN
             INSERT INTO tbl_inventaireNonAssigne (no_piece, quantite)
             select tbl_stock.id_piece, tbl_stock.quantite_stock
 			from tbl_inventaireNonAssigne right outer join tbl_stock 
 			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
 			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
-        END
 
     END
 
 	    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
 		
-		DELETE FROM tbl_Projet WHERE nom = @idProjet;
+		DELETE FROM tbl_Projet WHERE id_projet = @idProjet;
 
     COMMIT TRANSACTION;
 END TRY
@@ -538,7 +535,12 @@ BEGIN CATCH
 END CATCH;
 go
 
-exec SupprimerProjetEtRestaurerInventaire 4
+exec SupprimerProjetEtRestaurerInventaire 2
+
+select * from tbl_stock
+select* from tbl_impute
+select* from tbl_projet
+select* from tbl_inventaireNonAssigne
 
 
 /* ============================================
@@ -692,7 +694,4 @@ WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Belkin Pat
       SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
   );
 GO
-select * from tbl_stock
-select* from tbl_impute
-select* from tbl_projet
-select* from tbl_inventaireNonAssigne
+
