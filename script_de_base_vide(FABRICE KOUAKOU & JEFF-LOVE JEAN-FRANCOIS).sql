@@ -134,12 +134,12 @@ go
 /* PARTIE 3 */
 /* 2. a) insertion de donn�es en batch � partir de bdDonnee pour les employes */
 
-insert into tbl_employee(prenom, nom, email) select Pr�nom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
+insert into tbl_employee(prenom, nom, email) select prenom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
 go
 
 /* 2. b) insertion de donn�es en batch � partir de bdDonnee pour les pieces de votre sujet */
 
-insert into tbl_piece(description, numeroIndustrie) select Description, [Num�ro de Pi�ce] from BDDonneesTP.DBO.reseau$
+insert into tbl_piece(description, numeroIndustrie) select Description, [Numero de Piece] from BDDonneesTP.DBO.reseau$
 go
 
 /* 2. c) pratique cross apply : trouver les employ�s qui ont un nom et pr�nom identique � d�autres. */
@@ -492,17 +492,64 @@ GO
 create table tbl_inventaireNonAssigne(
 no_inventaireNonAssigne int identity primary key, 
 no_piece int unique , 
-quantit� int,
+quantite int,
 )
 go
 
+CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
+    @idProjet int
+AS
+BEGIN TRY
+    SET NOCOUNT ON;
+    
+	BEGIN TRANSACTION;
+
+    BEGIN
+        BEGIN
+            UPDATE tbl_inventaireNonAssigne
+            SET quantite = quantite + tbl_stock.quantite_stock
+			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet
+        END
+
+        BEGIN
+            INSERT INTO tbl_inventaireNonAssigne (no_piece, quantite)
+            select tbl_stock.id_piece, tbl_stock.quantite_stock
+			from tbl_inventaireNonAssigne right outer join tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
+        END
+
+    END
+
+	    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
+		DELETE FROM tbl_Projet WHERE nom = @idProjet;
+
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        THROW 51000, 'Probleme durant l''execution, la suppression est annulee.', 1;
+    END
+END CATCH;
+go
+
+exec SupprimerProjetEtRestaurerInventaire 4
+
+select * from tbl_stock
+select* from tbl_impute
+select* from tbl_projet
+select* from tbl_inventaireNonAssigne
 
 /* ============================================
    PARTIE 4 : LES D�CLENCHEURS (TRIGGER)
    Objectif : Ne pas d�passer la quantit� pr�vue
    ============================================ */
 
-/* a) Cr�ation du d�clencheur avec THROW et TRY...CATCH */
+/* a)le declencheur avec le throw  */
 
 CREATE OR ALTER TRIGGER verifiQtePrevu
 ON tbl_stock
@@ -523,7 +570,7 @@ BEGIN
             WHERE i.quantite_prevu < i.quantite_stock + ISNULL(impTotal.totalImpute, 0)
         )
         BEGIN
-            THROW 50001, 'La quantit� pr�vue est d�pass�e pour ce projet-pi�ce.', 1;
+            THROW 50001, 'la quantite prevu est depasee.', 1;
         END
     END TRY
     BEGIN CATCH
@@ -573,33 +620,6 @@ WHERE p.nom = 'Projet Alpha';
 --select * from tbl_inventaireNonAssigne
 
 
-CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
-    @idProjet int
-AS
-BEGIN TRY
-    SET NOCOUNT ON;
-    
-	BEGIN TRANSACTION;
-
-    BEGIN
-        BEGIN
-            UPDATE tbl_inventaireNonAssigne
-            SET quantit� = quantit� + tbl_stock.quantite_stock
-			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
-			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
-			where tbl_stock.id_projet = @idProjet
-        END
-
-        BEGIN
-            INSERT INTO tbl_inventaireNonAssigne (no_piece, quantit�)
-            select tbl_stock.id_piece, tbl_stock.quantite_stock
-			from tbl_inventaireNonAssigne right outer join tbl_stock 
-			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
-			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
-        END
-
-    END
-
 -- Test 3 (Ajout en lot REFUS� pour Gamma)
 -- Projet Gamma : 10 < 11 (Stock) ? Faux ? REFUS�
 -- Projet Delta : 30 >= 10 ? OK (correct)
@@ -621,11 +641,11 @@ FROM tbl_projet p
 inner join tbl_piece pi ON pi.description = 'Belkin Patch Cable Cat6a 1m'
 WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
 GO
-    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
+
 
 /* d) Tests de modification */
 
--- Modif 1 (REFUS�E)
+-- Modif 1 (REFUSE)
 -- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 15
 -- Calcul : 20 < (15 + 6 = 21) ? Faux ? REFUS�
 UPDATE tbl_stock
@@ -633,22 +653,8 @@ SET quantite_stock = 15
 WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
   AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
 GO
-    DELETE FROM tbl_Projet WHERE nom = @idProjet;
-
-    COMMIT TRANSACTION;
-END TRY
-BEGIN CATCH
-    IF @@TRANCOUNT > 0
-    BEGIN
-        ROLLBACK TRANSACTION;
-        THROW 51000, 'Probl�me durant l''ex�cution, la suppression est annul�e.', 1;
-    END
-END CATCH;
-go
-
-exec SupprimerProjetEtRestaurerInventaire 4
-
---  Modif 2 (ACCEPT�E)
+    
+--  Modif 2 (ACCEPTEE)
 -- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 10
 -- Calcul : 20 >= (10 + 6 = 16) ? OK
 UPDATE tbl_stock
@@ -672,7 +678,7 @@ WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Asus XG-C1
   );
 GO
 
--- Modif en lot (ACCEPT�E)
+-- Modif en lot (ACCEPTE)
 -- Gamma: 20 >= 10, Delta: 40 >= 15 ? OK
 UPDATE tbl_stock
 SET quantite_stock = 
@@ -686,7 +692,4 @@ WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Belkin Pat
       SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
   );
 GO
-select * from tbl_stock
-select* from tbl_impute
-select* from tbl_projet
-select* from tbl_inventaireNonAssigne
+
