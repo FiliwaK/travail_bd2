@@ -492,7 +492,7 @@ GO
 create table tbl_inventaireNonAssigne(
 no_inventaireNonAssigne int identity primary key, 
 no_piece int unique , 
-quantit� int,
+quantite int,
 )
 go
 
