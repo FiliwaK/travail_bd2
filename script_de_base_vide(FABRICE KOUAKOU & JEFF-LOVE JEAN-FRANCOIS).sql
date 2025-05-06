@@ -551,36 +551,37 @@ select* from tbl_inventaireNonAssigne
 
 /* a)le declencheur avec le throw  */
 
-CREATE OR ALTER TRIGGER verifiQtePrevu
-ON tbl_stock
-AFTER INSERT, UPDATE
+
+CREATE OR ALTER FUNCTION dbo.VerifierQuantiteePrevue(@id_stock INT)
+RETURNS INT
 AS
 BEGIN
-    SET NOCOUNT ON;
+    DECLARE @quantitePrevu INT;
+    DECLARE @quantiteStock INT;
+    DECLARE @quantiteImputee INT;
+    DECLARE @valide INT;
 
-    BEGIN TRY
-        IF EXISTS (
-            SELECT 1 
-            FROM inserted i
-            LEFT JOIN (
-                SELECT id_stock, SUM(quantite_impute) AS totalImpute
-                FROM tbl_impute
-                GROUP BY id_stock
-            ) impTotal ON i.id_stock = impTotal.id_stock
-            WHERE i.quantite_prevu < i.quantite_stock + ISNULL(impTotal.totalImpute, 0)
-        )
-        BEGIN
-            THROW 50001, 'la quantite prevu est depasee.', 1;
-        END
-    END TRY
-    BEGIN CATCH
-        ROLLBACK TRANSACTION;
-        THROW;
-    END CATCH
+    SELECT @quantitePrevu = quantite_prevu,
+           @quantiteStock = quantite_stock
+    FROM tbl_stock
+    WHERE id_stock = @id_stock;
+
+    SELECT @quantiteImputee = SUM(quantite_impute)
+    FROM tbl_impute
+    WHERE id_stock = @id_stock;
+
+    SET @quantiteImputee = ISNULL(@quantiteImputee, 0);
+
+    IF @quantitePrevu >= (@quantiteStock + @quantiteImputee)
+        SET @valide = 1; 
+    ELSE
+        SET @valide = 0; 
+
+    RETURN @valide;
 END;
 GO
 
-/* b) Une pi�ce dans 2 projets + 2 imputations */
+/* b) Une piece dans 2 projets + 2 imputations */
 
 -- Imputation 1 - Projet Alpha
 INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
@@ -601,18 +602,25 @@ GO
 
 /* c) Tests d'ajout */
 
--- Test 1 (Ajout REFUS�) : QtePrevue 10, Stock 5, Imputations 6 ? 10 < 5+6=11
--- Calcul : 10 >= (5 + 6 = 11) ? Faux ? REFUS�
+-- Test 1 (Ajout REFUSE) : QtePrevue 6, Stock 11, Imputations 6 ? 6 < 11+0
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
-SELECT p.id_projet, pi.id_piece, 10, 5
-FROM tbl_projet p
-inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
-WHERE p.nom = 'Projet Beta';
+VALUES (3, 3, 6, 11)
+SELECT* FROM tbl_stock
 
 
--- Test 2 (Ajout ACCEPT�) : QtePrevue 20, Stock 5, Imputations 6 ? 20 >= 11
+-- Test 2 : Ajout accepté
+-- qtePrevu 20, stock 5, imputations 0 → 20 >= 5
+
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (4, 6, 20, 5)  -- ✔ nouveaux ID
+SELECT* FROM tbl_stock
+
+
+-- Test 2 (Ajout ACCEPTE) : QtePrevue 20, Stock 5, Imputations 6 ? 20 >= 11
 -- Calcul : 20 >= (5 + 6 = 11) ? Vrai ? ACCEPT�
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (2, 5,12)
+
 SELECT p.id_projet, pi.id_piece, 20, 5
 FROM tbl_projet p
 inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
@@ -620,16 +628,7 @@ WHERE p.nom = 'Projet Alpha';
 --select * from tbl_inventaireNonAssigne
 
 
--- Test 3 (Ajout en lot REFUS� pour Gamma)
--- Projet Gamma : 10 < 11 (Stock) ? Faux ? REFUS�
--- Projet Delta : 30 >= 10 ? OK (correct)
-INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
-SELECT p.id_projet, pi.id_piece,
-       CASE WHEN p.nom = 'Projet Gamma' THEN 10 ELSE 30 END,
-       CASE WHEN p.nom = 'Projet Gamma' THEN 11 ELSE 10 END
-FROM tbl_projet p
-inner join tbl_piece pi ON pi.description = 'Asus XG-C100C'
-WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
+
 
 -- Test 4 (Ajout en lot ACCEPT�)
 -- Gamma: 20 >= 5, Delta: 40 >= 10 ? OK
