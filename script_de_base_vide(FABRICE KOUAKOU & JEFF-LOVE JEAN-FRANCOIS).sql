@@ -543,6 +543,110 @@ select* from tbl_projet
 select* from tbl_inventaireNonAssigne
 
 
+/*
+/* Script de vérification du bon fonctionnement de la procédure de suppression de projet */
+
+-- 1. Création d’un projet temporaire
+DECLARE @id_projet INT;
+DECLARE @id_piece1 INT;
+DECLARE @id_piece2 INT;
+
+-- Création du projet
+INSERT INTO tbl_projet (nom, description, id_compagnie)
+VALUES ('Projet Temporaire', 'Projet test pour destruction', 
+       (SELECT TOP 1 id_compagnie FROM tbl_compagnie))
+SET @id_projet = SCOPE_IDENTITY();
+
+-- 2. Ajout de deux pièces au projet
+-- On récupère des pièces existantes
+SELECT TOP 2 @id_piece1 = id_piece FROM tbl_piece WHERE description IS NOT NULL ORDER BY id_piece;
+SELECT TOP 1 @id_piece2 = id_piece FROM tbl_piece WHERE id_piece <> @id_piece1;
+
+-- Insertion dans tbl_stock
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES 
+(@id_projet, @id_piece1, 50, 100),
+(@id_projet, @id_piece2, 40, 80);
+
+-- 3. Ajout manuel d’une des pièces à tbl_inventaireNonAssigne
+INSERT INTO tbl_inventaireNonAssigne (no_piece, quantite)
+VALUES (@id_piece1, 5);
+
+-- 4. Sélections AVANT suppression
+
+SELECT * FROM tbl_projet WHERE id_projet = @id_projet;
+SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
+SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece IN (@id_piece1, @id_piece2);
+
+-- 5. Appel de votre procédure de suppression
+EXEC SupprimerProjetEtRestaurerInventaire 5 @id_projet;
+
+-- 6. Sélections APRÈS suppression
+
+SELECT * FROM tbl_projet WHERE id_projet = @id_projet;
+SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
+SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece IN (@id_piece1, @id_piece2);
+*/
+
+/*
+/* TEST NON-FONCTIONNEMENT : Suppression d’un projet avec pièces imputées */
+
+DECLARE @id_projet INT;
+DECLARE @id_piece1 INT;
+DECLARE @id_employe INT;
+
+-- Création du projet
+INSERT INTO tbl_projet (nom, description, id_compagnie)
+VALUES ('Projet Imputation', 'Projet test échec suppression', 
+       (SELECT TOP 1 id_compagnie FROM tbl_compagnie));
+SET @id_projet = SCOPE_IDENTITY();
+
+-- Récupération d'une pièce existante
+SELECT TOP 1 @id_piece1 = id_piece FROM tbl_piece WHERE description IS NOT NULL ORDER BY id_piece;
+
+-- Insertion dans tbl_stock
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (@id_projet, @id_piece1, 20, 50);
+
+-- Création d’un employé pour faire une imputation
+INSERT INTO tbl_employe (nom, prenom) VALUES ('Test', 'Employe');
+SET @id_employe = SCOPE_IDENTITY();
+
+-- Création d'une imputation (rendra la suppression invalide)
+INSERT INTO tbl_imputation (
+		id_employee,
+		id_stock,
+		quantite_impute,
+		date_imputee )
+VALUES (@id_employe, @id_projet, @id_piece1, 5, GETDATE());
+
+-- Sélections AVANT suppression
+SELECT * FROM tbl_projet WHERE id_projet = @id_projet;
+SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
+SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece = @id_piece1;
+SELECT * FROM tbl_imputation WHERE id_projet = @id_projet;
+
+-- Tentative de suppression (doit échouer à cause de l’imputation)
+BEGIN TRY
+    EXEC SupprimerProjetEtRestaurerInventaire @id_projet;
+END TRY
+BEGIN CATCH
+    PRINT 'ERREUR ATTENDUE : ' + ERROR_MESSAGE();
+END CATCH;
+
+-- Sélections APRÈS tentative de suppression
+SELECT * FROM tbl_projet WHERE id_projet = @id_projet;
+SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
+SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece = @id_piece1;
+SELECT * FROM tbl_imputation WHERE id_projet = @id_projet;
+
+*/
+
+
+
+
+
+
 /* ============================================
    PARTIE 4 : LES D�CLENCHEURS (TRIGGER)
    Objectif : Ne pas d�passer la quantit� pr�vue
