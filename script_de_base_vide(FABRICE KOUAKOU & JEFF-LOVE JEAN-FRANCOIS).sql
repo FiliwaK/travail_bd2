@@ -496,6 +496,50 @@ quantite int,
 )
 go
 
+CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
+    @idProjet int
+AS
+BEGIN TRY
+    SET NOCOUNT ON;
+    
+	BEGIN TRANSACTION;
+
+    BEGIN
+        BEGIN
+            UPDATE tbl_inventaireNonAssigne
+            SET quantite = quantite + tbl_stock.quantite_stock
+			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet
+        END
+
+        BEGIN
+            INSERT INTO tbl_inventaireNonAssigne (no_piece, quantite)
+            select tbl_stock.id_piece, tbl_stock.quantite_stock
+			from tbl_inventaireNonAssigne right outer join tbl_stock 
+			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
+			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
+        END
+
+    END
+
+	    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
+		
+		DELETE FROM tbl_Projet WHERE nom = @idProjet;
+
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0
+    BEGIN
+        ROLLBACK TRANSACTION;
+        THROW 51000, 'Probleme durant l''execution, la suppression est annulee.', 1;
+    END
+END CATCH;
+go
+
+exec SupprimerProjetEtRestaurerInventaire 4
+
 
 /* ============================================
    PARTIE 4 : LES D�CLENCHEURS (TRIGGER)
@@ -573,32 +617,7 @@ WHERE p.nom = 'Projet Alpha';
 --select * from tbl_inventaireNonAssigne
 
 
-CREATE OR ALTER PROCEDURE SupprimerProjetEtRestaurerInventaire
-    @idProjet int
-AS
-BEGIN TRY
-    SET NOCOUNT ON;
-    
-	BEGIN TRANSACTION;
 
-    BEGIN
-        BEGIN
-            UPDATE tbl_inventaireNonAssigne
-            SET quantit� = quantit� + tbl_stock.quantite_stock
-			from tbl_inventaireNonAssigne INNER JOIN tbl_stock 
-			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
-			where tbl_stock.id_projet = @idProjet
-        END
-
-        BEGIN
-            INSERT INTO tbl_inventaireNonAssigne (no_piece, quantit�)
-            select tbl_stock.id_piece, tbl_stock.quantite_stock
-			from tbl_inventaireNonAssigne right outer join tbl_stock 
-			on tbl_inventaireNonAssigne.no_piece = tbl_stock.id_piece
-			where tbl_stock.id_projet = @idProjet and tbl_inventaireNonAssigne.no_piece is null
-        END
-
-    END
 
 -- Test 3 (Ajout en lot REFUS� pour Gamma)
 -- Projet Gamma : 10 < 11 (Stock) ? Faux ? REFUS�
@@ -621,7 +640,7 @@ FROM tbl_projet p
 inner join tbl_piece pi ON pi.description = 'Belkin Patch Cable Cat6a 1m'
 WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
 GO
-    DELETE FROM tbl_stock WHERE tbl_stock.id_projet = @idProjet;
+
 
 /* d) Tests de modification */
 
@@ -633,20 +652,7 @@ SET quantite_stock = 15
 WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
   AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
 GO
-    DELETE FROM tbl_Projet WHERE nom = @idProjet;
 
-    COMMIT TRANSACTION;
-END TRY
-BEGIN CATCH
-    IF @@TRANCOUNT > 0
-    BEGIN
-        ROLLBACK TRANSACTION;
-        THROW 51000, 'Probl�me durant l''ex�cution, la suppression est annul�e.', 1;
-    END
-END CATCH;
-go
-
-exec SupprimerProjetEtRestaurerInventaire 4
 
 --  Modif 2 (ACCEPT�E)
 -- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 10
