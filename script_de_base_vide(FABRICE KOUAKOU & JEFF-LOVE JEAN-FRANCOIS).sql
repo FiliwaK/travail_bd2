@@ -8,20 +8,20 @@
 
 use master
 go
-IF EXISTS (SELECT name FROM sys.databases WHERE name = 'Bd_Reseau')
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'Bd_Reseau2')
 BEGIN
-    --ALTER DATABASE Bd_Reseau SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-	drop database Bd_Reseau
+    ALTER DATABASE Bd_Reseau2 SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+	drop database Bd_Reseau2
 END
 
 
 
 /* cr�ation de votre bd  */
 
-CREATE DATABASE Bd_Reseau
+CREATE DATABASE Bd_Reseau2
 go
 
-Use Bd_Reseau
+Use Bd_Reseau2
 go
 
 /* voici le code permettant de donner les droits � un autre usager, ici nomm� [sonNoDa] */
@@ -134,12 +134,12 @@ go
 /* PARTIE 3 */
 /* 2. a) insertion de donn�es en batch � partir de bdDonnee pour les employes */
 
-insert into tbl_employee(prenom, nom, email) select prenom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
+insert into tbl_employee(prenom, nom, email) select Prénom, Nom, [Adresse Email] from BDDonneesTP.DBO.employe$
 go
 
 /* 2. b) insertion de donn�es en batch � partir de bdDonnee pour les pieces de votre sujet */
 
-insert into tbl_piece(description, numeroIndustrie) select Description, [Numero de Piece] from BDDonneesTP.DBO.reseau$
+insert into tbl_piece(description, numeroIndustrie) select Description, [Numéro de Pièce] from BDDonneesTP.DBO.reseau$
 go
 
 /* 2. c) pratique cross apply : trouver les employ�s qui ont un nom et pr�nom identique � d�autres. */
@@ -230,7 +230,7 @@ INSERT INTO [dbo].[tbl_impute]
 
 
 select (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = '�milie' 
+AND e1.prenom = 'émilie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 from tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -241,7 +241,7 @@ and tbl_stock.id_projet in (select tbl_projet.id_projet from tbl_projet where no
 UNION ALL
 
 SELECT (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = '�milie' 
+AND e1.prenom = 'émilie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 FROM tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -544,6 +544,10 @@ select* from tbl_impute
 select* from tbl_projet
 select* from tbl_inventaireNonAssigne
 
+go
+
+
+
 /* ============================================
    PARTIE 4 : LES D�CLENCHEURS (TRIGGER)
    Objectif : Ne pas d�passer la quantit� pr�vue
@@ -560,26 +564,53 @@ BEGIN
     DECLARE @quantiteStock INT;
     DECLARE @quantiteImputee INT;
     DECLARE @valide INT;
-
-    SELECT @quantitePrevu = quantite_prevu,
-           @quantiteStock = quantite_stock
-    FROM tbl_stock
-    WHERE id_stock = @id_stock;
-
     SELECT @quantiteImputee = SUM(quantite_impute)
     FROM tbl_impute
     WHERE id_stock = @id_stock;
 
     SET @quantiteImputee = ISNULL(@quantiteImputee, 0);
 
-    IF @quantitePrevu >= (@quantiteStock + @quantiteImputee)
-        SET @valide = 1; 
-    ELSE
-        SET @valide = 0; 
-
-    RETURN @valide;
+    RETURN @quantiteImputee;
 END;
 GO
+
+select dbo.VerifierQuantiteePrevue (2)
+go
+
+
+create or alter  trigger VerifierLaQuantiteeEnStock
+on tbl_Stock
+for insert,update
+AS
+--set nocount on
+--if exists ( select inserted.id_piece
+--						from inserted
+--						where id_piece is not null) and update(noEmployeResponsable)
+--begin
+
+
+--select *, dbo.VerifierQuantiteePrevue (id_stock) from inserted
+
+	if exists ( select *, dbo.VerifierQuantiteePrevue (id_stock) from inserted
+							where inserted.quantite_prevu < quantite_stock + 
+							dbo.VerifierQuantiteePrevue (id_stock) )
+	begin
+		rollback;
+		THROW 51000, 'La quantitee est depassee', 16;
+	end
+set nocount off
+go
+
+
+/*
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+values (2, 3,1,2)
+
+select * from tbl_stock
+
+*/
+go
+
 
 /* b) Une piece dans 2 projets + 2 imputations */
 
@@ -591,6 +622,8 @@ inner join tbl_stock s ON s.id_piece = (SELECT id_piece FROM tbl_piece WHERE des
 inner join tbl_projet p ON s.id_projet = p.id_projet
 WHERE p.nom = 'Projet Alpha';
 
+go
+
 -- Imputation 2 - Projet Beta
 INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
 SELECT TOP 1 id_employee, s.id_stock, 6, GETDATE()
@@ -600,95 +633,82 @@ inner join tbl_projet p ON s.id_projet = p.id_projet
 WHERE p.nom = 'Projet Beta';
 GO
 
-/* c) Tests d'ajout */
 
--- Test 1 (Ajout REFUSE) : QtePrevue 6, Stock 11, Imputations 6 ? 6 < 11+0
+/* c) Tests d'ajout refuse */
+/*
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
-VALUES (3, 3, 6, 11)
-SELECT* FROM tbl_stock
+VALUES (4, 7, 1000, 2000);
+
+select* from tbl_projet
+*/
 
 
--- Test 2 : Ajout accepté
--- qtePrevu 20, stock 5, imputations 0 → 20 >= 5
-
+-- Ajout accepté :
+/*
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
-VALUES (4, 6, 20, 5)  -- ✔ nouveaux ID
-SELECT* FROM tbl_stock
+VALUES (1, 6, 50, 10);
+select * from tbl_stock
+*/
 
-
--- Test 2 (Ajout ACCEPTE) : QtePrevue 20, Stock 5, Imputations 6 ? 20 >= 11
--- Calcul : 20 >= (5 + 6 = 11) ? Vrai ? ACCEPT�
+--- Test 1 (Ajout REFUSÉ)
+/*
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
-VALUES (2, 5,12)
-
-SELECT p.id_projet, pi.id_piece, 20, 5
-FROM tbl_projet p
-inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
-WHERE p.nom = 'Projet Alpha';
---select * from tbl_inventaireNonAssigne
+VALUES (4, 7, 1000, 2000);
+*/
 
 
-
-
--- Test 4 (Ajout en lot ACCEPT�)
--- Gamma: 20 >= 5, Delta: 40 >= 10 ? OK
+-- Ajout accepté :
+/*
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
-SELECT p.id_projet, pi.id_piece,
-       CASE WHEN p.nom = 'Projet Gamma' THEN 20 ELSE 40 END,
-       CASE WHEN p.nom = 'Projet Gamma' THEN 5 ELSE 10 END
-FROM tbl_projet p
-inner join tbl_piece pi ON pi.description = 'Belkin Patch Cable Cat6a 1m'
-WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
-GO
+VALUES (3, 8, 30, 10);
+*/
 
 
-/* d) Tests de modification */
 
--- Modif 1 (REFUSE)
--- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 15
--- Calcul : 20 < (15 + 6 = 21) ? Faux ? REFUS�
+/* d) d)	Tests de modifications (mettre un commentaire comme demandé précédemment) */
+
+-- Modif 1 (REFUSÉE)
+
+/*
 UPDATE tbl_stock
-SET quantite_stock = 15
-WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
-  AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
-GO
+SET quantite_stock = 110
+WHERE id_projet = 1 AND id_piece = 1;
+*/
+
     
---  Modif 2 (ACCEPTEE)
--- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 10
--- Calcul : 20 >= (10 + 6 = 16) ? OK
+-- Modif 2 (ACCEPTÉE)
+/*
 UPDATE tbl_stock
-SET quantite_stock = 10
-WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
-  AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
-GO
+SET quantite_stock = 30
+WHERE id_projet = 1 AND id_piece = 1;
+*/
 
---  Modif en lot (REFUS�E pour Projet Gamma)
--- Gamma: 10 < 15 ? Faux, Delta: 30 >= 5 ? OK
+
+-- Modif 3 (EN LOT – REFUSÉE)
+
+/*
 UPDATE tbl_stock
 SET quantite_stock = 
     CASE 
-        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Gamma') THEN 15
-        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Delta') THEN 5
+        WHEN id_stock = 3 THEN 180  
+        WHEN id_stock = 4 THEN 30   
         ELSE quantite_stock
     END
-WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Asus XG-C100C')
-  AND id_projet IN (
-      SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
-  );
-GO
+WHERE id_stock IN (3, 4);
+*/
 
--- Modif en lot (ACCEPTE)
--- Gamma: 20 >= 10, Delta: 40 >= 15 ? OK
+
+-- Modif en lot (ACCEPTÉE)
+
+/*
 UPDATE tbl_stock
 SET quantite_stock = 
     CASE 
-        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Gamma') THEN 10
-        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Delta') THEN 15
+        WHEN id_stock = 5 THEN 30
+        WHEN id_stock = 6 THEN 25
         ELSE quantite_stock
     END
-WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Belkin Patch Cable Cat6a 1m')
-  AND id_projet IN (
-      SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
-  );
-GO
+WHERE id_stock IN (5, 6);
+*/
+
 
