@@ -23,6 +23,8 @@ public partial class Bd_ReseauContext : DbContext
 
     public virtual DbSet<TblImpute> TblImputes { get; set; }
 
+    public virtual DbSet<TblInventaireNonAssigne> TblInventaireNonAssignes { get; set; }
+
     public virtual DbSet<TblPiece> TblPieces { get; set; }
 
     public virtual DbSet<TblProjet> TblProjets { get; set; }
@@ -39,17 +41,17 @@ public partial class Bd_ReseauContext : DbContext
     {
         modelBuilder.Entity<TblCompagnie>(entity =>
         {
-            entity.HasKey(e => e.IdCompagnie).HasName("PK__tbl_comp__517CB383612CA6AB");
+            entity.HasKey(e => e.IdCompagnie).HasName("PK__tbl_comp__517CB383D62319A3");
         });
 
         modelBuilder.Entity<TblEmployee>(entity =>
         {
-            entity.HasKey(e => e.IdEmployee).HasName("PK__tbl_empl__F807679CFBA6A795");
+            entity.HasKey(e => e.IdEmployee).HasName("PK__tbl_empl__F807679C3948CA0A");
         });
 
         modelBuilder.Entity<TblImpute>(entity =>
         {
-            entity.HasKey(e => e.IdImpute).HasName("PK__tbl_impu__AD6F00C0BC56D0C6");
+            entity.HasKey(e => e.IdImpute).HasName("PK__tbl_impu__AD6F00C06D33329A");
 
             entity.HasOne(d => d.IdEmployeeNavigation).WithMany(p => p.TblImputes)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -60,14 +62,19 @@ public partial class Bd_ReseauContext : DbContext
                 .HasConstraintName("FK_impute_stock");
         });
 
+        modelBuilder.Entity<TblInventaireNonAssigne>(entity =>
+        {
+            entity.HasKey(e => e.NoInventaireNonAssigne).HasName("PK__tbl_inve__AE59987A0683E552");
+        });
+
         modelBuilder.Entity<TblPiece>(entity =>
         {
-            entity.HasKey(e => e.IdPiece).HasName("PK__tbl_piec__D20D1E0A319FCD52");
+            entity.HasKey(e => e.IdPiece).HasName("PK__tbl_piec__D20D1E0A9BA98AEA");
         });
 
         modelBuilder.Entity<TblProjet>(entity =>
         {
-            entity.HasKey(e => e.IdProjet).HasName("PK__tbl_proj__36C5661D60ECBB28");
+            entity.HasKey(e => e.IdProjet).HasName("PK__tbl_proj__36C5661D8386D86E");
 
             entity.HasOne(d => d.IdCompagnieNavigation).WithMany(p => p.TblProjets)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -76,7 +83,7 @@ public partial class Bd_ReseauContext : DbContext
 
         modelBuilder.Entity<TblStock>(entity =>
         {
-            entity.HasKey(e => e.IdStock).HasName("PK__tbl_stoc__3A39590AB42A8B12");
+            entity.HasKey(e => e.IdStock).HasName("PK__tbl_stoc__3A39590A5FB604D4");
 
             entity.HasOne(d => d.IdPieceNavigation).WithMany(p => p.TblStocks)
                 .OnDelete(DeleteBehavior.ClientSetNull)

@@ -13,10 +13,10 @@ namespace Travail_2_BD.Models
 {
     public partial interface IBd_ReseauContextProcedures
     {
-        Task<int> AjouterImputationAsync(int? id_employee, int? id_piece, int? id_projet, int? quantite_impute, DateTime? date_imputee, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<int> MettreAJourStockAsync(int? id_piece, int? id_projet, int? quantite_impute, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<int> ModifierQuantitePrevueProjetAsync(int? id_stock, int? id_projet, string nom_projet, int? id_piece, string nom_piece, int? quantite_prevu, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<RechercherPieceParNumeroIndustrieResult>> RechercherPieceParNumeroIndustrieAsync(string noIndustrie, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<RechercherProjetsParNumeroIndustrieResult>> RechercherProjetsParNumeroIndustrieAsync(string numeroIndustrie, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<int> SupprimerProjetEtRestaurerInventaireAsync(int? idProjet, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }
 }

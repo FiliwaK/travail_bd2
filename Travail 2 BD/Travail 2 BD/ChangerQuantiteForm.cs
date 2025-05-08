@@ -72,5 +72,33 @@ namespace Travail_2_BD
                 throw;
             }
         }
+
+        private async void supprimerProjetButton_Click(object sender, EventArgs e)
+        {
+            var messageDeSuppression = MessageBox.Show("Etes-Vous sure de vouloir supprimer ce projet ?", "Supprimer projet", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (messageDeSuppression == DialogResult.Yes)
+            {
+                try
+                {
+                    int noProjet = (int)nomProjetComboBox.SelectedValue;
+                    int nombreDeligneAffectee = await managerProjet.SupprimerProjetEtRestaurerInventaireAsync(noProjet);
+                    if (nombreDeligneAffectee > 0) 
+                    {
+                        MessageBox.Show("Suppression du projet réussi");
+                        RemplirComboBoxProjet();
+
+                    }
+
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+
+            }
+
+        }
     }
 }

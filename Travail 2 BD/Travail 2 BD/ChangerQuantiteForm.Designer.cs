@@ -33,6 +33,7 @@
             label1 = new Label();
             pieceDataGridView = new DataGridView();
             label2 = new Label();
+            supprimerProjetButton = new Button();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pieceDataGridView).BeginInit();
             SuspendLayout();
@@ -84,11 +85,22 @@
             label2.TabIndex = 2;
             label2.Text = "Pieces";
             // 
+            // supprimerProjetButton
+            // 
+            supprimerProjetButton.Location = new Point(853, 45);
+            supprimerProjetButton.Name = "supprimerProjetButton";
+            supprimerProjetButton.Size = new Size(229, 83);
+            supprimerProjetButton.TabIndex = 3;
+            supprimerProjetButton.Text = "Supprimer Projet";
+            supprimerProjetButton.UseVisualStyleBackColor = true;
+            supprimerProjetButton.Click += supprimerProjetButton_Click;
+            // 
             // ChangerQuantiteForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1182, 450);
+            Controls.Add(supprimerProjetButton);
             Controls.Add(label2);
             Controls.Add(pieceDataGridView);
             Controls.Add(groupBox1);
@@ -109,5 +121,6 @@
         private Label label1;
         private DataGridView pieceDataGridView;
         private Label label2;
+        private Button supprimerProjetButton;
     }
 }

@@ -27,6 +27,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[tbl_inventaireNonAssigne]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[tbl_piece]",
          "ObjectType": 0
       },
@@ -43,10 +47,6 @@
          "ObjectType": 3
       },
       {
-         "Name": "[dbo].[AjouterImputation]",
-         "ObjectType": 1
-      },
-      {
          "Name": "[dbo].[MettreAJourStock]",
          "ObjectType": 1
       },
@@ -60,6 +60,10 @@
       },
       {
          "Name": "[dbo].[RechercherProjetsParNumeroIndustrie]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[SupprimerProjetEtRestaurerInventaire]",
          "ObjectType": 1
       }
    ],

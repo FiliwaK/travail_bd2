@@ -35,6 +35,23 @@ namespace Travail_2_BD.Manager
             return Context.VueListerQuantitePrevueProjets.Where(l => l.IdProjet == projetSelectionne).OrderBy(p => p.NomProjet).ToList();      
         }
 
+
+        public async Task<int> SupprimerProjetEtRestaurerInventaireAsync(int idProjet)
+        {
+            using var context = new Bd_ReseauContext();
+            int nombreDeLigneAffecte = 0;
+            try
+            {
+                nombreDeLigneAffecte = await context.Procedures.SupprimerProjetEtRestaurerInventaireAsync(idProjet);
+                return nombreDeLigneAffecte;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
         public int EnregistrerChangementDeQuantite()
         {
             int nombreLigne = 0;

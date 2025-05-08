@@ -43,56 +43,6 @@ namespace Travail_2_BD.Models
             _context = context;
         }
 
-        public virtual async Task<int> AjouterImputationAsync(int? id_employee, int? id_piece, int? id_projet, int? quantite_impute, DateTime? date_imputee, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
-        {
-            var parameterreturnValue = new SqlParameter
-            {
-                ParameterName = "returnValue",
-                Direction = System.Data.ParameterDirection.Output,
-                SqlDbType = System.Data.SqlDbType.Int,
-            };
-
-            var sqlParameters = new []
-            {
-                new SqlParameter
-                {
-                    ParameterName = "id_employee",
-                    Value = id_employee ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.Int,
-                },
-                new SqlParameter
-                {
-                    ParameterName = "id_piece",
-                    Value = id_piece ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.Int,
-                },
-                new SqlParameter
-                {
-                    ParameterName = "id_projet",
-                    Value = id_projet ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.Int,
-                },
-                new SqlParameter
-                {
-                    ParameterName = "quantite_impute",
-                    Value = quantite_impute ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.Int,
-                },
-                new SqlParameter
-                {
-                    ParameterName = "date_imputee",
-                    Value = date_imputee ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.Date,
-                },
-                parameterreturnValue,
-            };
-            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[AjouterImputation] @id_employee = @id_employee, @id_piece = @id_piece, @id_projet = @id_projet, @quantite_impute = @quantite_impute, @date_imputee = @date_imputee", sqlParameters, cancellationToken);
-
-            returnValue?.SetValue(parameterreturnValue.Value);
-
-            return _;
-        }
-
         public virtual async Task<int> MettreAJourStockAsync(int? id_piece, int? id_projet, int? quantite_impute, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
@@ -237,6 +187,32 @@ namespace Travail_2_BD.Models
                 parameterreturnValue,
             };
             var _ = await _context.SqlQueryAsync<RechercherProjetsParNumeroIndustrieResult>("EXEC @returnValue = [dbo].[RechercherProjetsParNumeroIndustrie] @numeroIndustrie = @numeroIndustrie", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<int> SupprimerProjetEtRestaurerInventaireAsync(int? idProjet, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "idProjet",
+                    Value = idProjet ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.Database.ExecuteSqlRawAsync("EXEC @returnValue = [dbo].[SupprimerProjetEtRestaurerInventaire] @idProjet = @idProjet", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 

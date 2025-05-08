@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Travail_2_BD.Models;
 
 [Table("tbl_compagnie")]
-[Index("Nom", Name = "UQ__tbl_comp__DF90DC2CAFEC5543", IsUnique = true)]
+[Index("Nom", Name = "UQ__tbl_comp__DF90DC2C59AAE505", IsUnique = true)]
 public partial class TblCompagnie
 {
     [Key]
