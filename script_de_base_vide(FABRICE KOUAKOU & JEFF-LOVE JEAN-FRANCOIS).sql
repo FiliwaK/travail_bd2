@@ -241,7 +241,7 @@ and tbl_stock.id_projet in (select tbl_projet.id_projet from tbl_projet where no
 UNION ALL
 
 SELECT (select distinct id_employee from tbl_employee e1 where  e1.nom = 'Tremblay' 
-AND e1.prenom = 'emilie' 
+AND e1.prenom = 'émilie' 
 AND e1.email = 'emilie.trem@gmail.com'), tbl_stock.id_stock,  5, GETDATE()
 FROM tbl_stock 
 inner join tbl_projet on tbl_stock.id_projet = tbl_projet.id_projet 
@@ -535,12 +535,12 @@ BEGIN CATCH
 END CATCH;
 go
 
-exec SupprimerProjetEtRestaurerInventaire 2
+--exec SupprimerProjetEtRestaurerInventaire 2
 
-select * from tbl_stock
-select* from tbl_impute
-select* from tbl_projet
-select* from tbl_inventaireNonAssigne
+--select * from tbl_stock
+--select* from tbl_impute
+--select* from tbl_projet
+--select* from tbl_inventaireNonAssigne
 
 
 /*
@@ -579,7 +579,7 @@ SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
 SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece IN (@id_piece1, @id_piece2);
 
 -- 5. Appel de votre procédure de suppression
-EXEC SupprimerProjetEtRestaurerInventaire 5 @id_projet;
+EXEC SupprimerProjetEtRestaurerInventaire @id_projet;
 
 -- 6. Sélections APRÈS suppression
 
@@ -594,6 +594,7 @@ SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece IN (@id_piece1, @id_piece2
 DECLARE @id_projet INT;
 DECLARE @id_piece1 INT;
 DECLARE @id_employe INT;
+DECLARE @id_stock INT;
 
 -- Création du projet
 INSERT INTO tbl_projet (nom, description, id_compagnie)
@@ -604,27 +605,28 @@ SET @id_projet = SCOPE_IDENTITY();
 -- Récupération d'une pièce existante
 SELECT TOP 1 @id_piece1 = id_piece FROM tbl_piece WHERE description IS NOT NULL ORDER BY id_piece;
 
+
 -- Insertion dans tbl_stock
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
 VALUES (@id_projet, @id_piece1, 20, 50);
+SET @id_stock = SCOPE_IDENTITY();
 
 -- Création d’un employé pour faire une imputation
-INSERT INTO tbl_employe (nom, prenom) VALUES ('Test', 'Employe');
+INSERT INTO tbl_employee (nom, prenom, email) VALUES ('Test', 'Employe', 'testEmploye@gmail.com');
 SET @id_employe = SCOPE_IDENTITY();
 
 -- Création d'une imputation (rendra la suppression invalide)
-INSERT INTO tbl_imputation (
+INSERT INTO tbl_impute (
 		id_employee,
 		id_stock,
 		quantite_impute,
 		date_imputee )
-VALUES (@id_employe, @id_projet, @id_piece1, 5, GETDATE());
+VALUES (@id_employe, @id_stock, 5, GETDATE());
 
 -- Sélections AVANT suppression
 SELECT * FROM tbl_projet WHERE id_projet = @id_projet;
 SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
-SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece = @id_piece1;
-SELECT * FROM tbl_imputation WHERE id_projet = @id_projet;
+SELECT * FROM tbl_impute WHERE id_stock = @id_stock;
 
 -- Tentative de suppression (doit échouer à cause de l’imputation)
 BEGIN TRY
@@ -637,8 +639,7 @@ END CATCH;
 -- Sélections APRÈS tentative de suppression
 SELECT * FROM tbl_projet WHERE id_projet = @id_projet;
 SELECT * FROM tbl_stock WHERE id_projet = @id_projet;
-SELECT * FROM tbl_inventaireNonAssigne WHERE no_piece = @id_piece1;
-SELECT * FROM tbl_imputation WHERE id_projet = @id_projet;
+SELECT * FROM tbl_impute WHERE id_stock = @id_stock;
 
 */
 
