@@ -32,12 +32,12 @@ go
 --/* sp�cification de ses droits*/
 --ALTER ROLE [db_owner] ADD MEMBER [Kouakou Filiwa Fabrice Leonce]
 
-CREATE USER [Jeff] FOR LOGIN [corporatif\2334062] WITH DEFAULT_SCHEMA=[dbo]
-GO
-/* sp�cification de ses droits*/
-ALTER ROLE [db_owner] ADD MEMBER [Jeff]
+--CREATE USER [Jeff] FOR LOGIN [corporatif\2334062] WITH DEFAULT_SCHEMA=[dbo]
+--GO
+--/* sp�cification de ses droits*/
+--ALTER ROLE [db_owner] ADD MEMBER [Jeff]
 
-GO
+--GO
 
 /* cr�ation de vos tables simples */
 
@@ -642,157 +642,82 @@ SELECT * FROM tbl_impute WHERE id_stock = @id_stock;
 
 
 
+/* c) Partie C Tests d'ajout refuse */
+/*
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (4, 7, 1000, 2000);
+
+select* from tbl_projet
+*/
 
 
-/* ============================================
-   PARTIE 4 : LES D�CLENCHEURS (TRIGGER)
-   Objectif : Ne pas d�passer la quantit� pr�vue
-   ============================================ */
+-- Ajout accepté :
+/*
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (1, 6, 50, 10);
+select * from tbl_stock
+*/
 
-/* a) Cr�ation du d�clencheur avec THROW et TRY...CATCH */
-
---CREATE OR ALTER TRIGGER verifiQtePrevu
---ON tbl_stock
---AFTER INSERT, UPDATE
---AS
---BEGIN
---    SET NOCOUNT ON;
-
---    BEGIN TRY
---        IF EXISTS (
---            SELECT 1 
---            FROM inserted i
---            LEFT JOIN (
---                SELECT id_stock, SUM(quantite_impute) AS totalImpute
---                FROM tbl_impute
---                GROUP BY id_stock
---            ) impTotal ON i.id_stock = impTotal.id_stock
---            WHERE i.quantite_prevu < i.quantite_stock + ISNULL(impTotal.totalImpute, 0)
---        )
---        BEGIN
---            THROW 50001, 'La quantit� pr�vue est d�pass�e pour ce projet-pi�ce.', 1;
---        END
---    END TRY
---    BEGIN CATCH
---        ROLLBACK TRANSACTION;
---        THROW;
---    END CATCH
---END;
---GO
-
---/* b) Une pi�ce dans 2 projets + 2 imputations */
-
----- Imputation 1 - Projet Alpha
---INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
---SELECT TOP 1 id_employee, s.id_stock, 4, GETDATE()
---FROM tbl_employee e
---inner join tbl_stock s ON s.id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a')
---inner join tbl_projet p ON s.id_projet = p.id_projet
---WHERE p.nom = 'Projet Alpha';
-
----- Imputation 2 - Projet Beta
---INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
---SELECT TOP 1 id_employee, s.id_stock, 6, GETDATE()
---FROM tbl_employee e
---inner join tbl_stock s ON s.id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a')
---inner join tbl_projet p ON s.id_projet = p.id_projet
---WHERE p.nom = 'Projet Beta';
---GO
-
---/* c) Tests d'ajout */
-
----- Test 1 (Ajout REFUS�) : QtePrevue 10, Stock 5, Imputations 6 ? 10 < 5+6=11
----- Calcul : 10 >= (5 + 6 = 11) ? Faux ? REFUS�
---INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
---SELECT p.id_projet, pi.id_piece, 10, 5
---FROM tbl_projet p
---inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
---WHERE p.nom = 'Projet Beta';
+--- Test 1 (Ajout REFUSÉ)
+/*
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (4, 7, 1000, 2000);
+*/
 
 
----- Test 2 (Ajout ACCEPT�) : QtePrevue 20, Stock 5, Imputations 6 ? 20 >= 11
----- Calcul : 20 >= (5 + 6 = 11) ? Vrai ? ACCEPT�
---INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
---SELECT p.id_projet, pi.id_piece, 20, 5
---FROM tbl_projet p
---inner join tbl_piece pi ON pi.description = 'Cable Matters Cat 6a'
---WHERE p.nom = 'Projet Alpha';
-----select * from tbl_inventaireNonAssigne
+-- Ajout accepté :
+/*
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+VALUES (3, 8, 30, 10);
+*/
 
 
 
+/* d) d)	Tests de modifications (mettre un commentaire comme demandé précédemment) */
 
----- Test 3 (Ajout en lot REFUS� pour Gamma)
----- Projet Gamma : 10 < 11 (Stock) ? Faux ? REFUS�
----- Projet Delta : 30 >= 10 ? OK (correct)
---INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
---SELECT p.id_projet, pi.id_piece,
---       CASE WHEN p.nom = 'Projet Gamma' THEN 10 ELSE 30 END,
---       CASE WHEN p.nom = 'Projet Gamma' THEN 11 ELSE 10 END
---FROM tbl_projet p
---inner join tbl_piece pi ON pi.description = 'Asus XG-C100C'
---WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
+-- Modif 1 (REFUSÉE)
 
----- Test 4 (Ajout en lot ACCEPT�)
----- Gamma: 20 >= 5, Delta: 40 >= 10 ? OK
---INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
---SELECT p.id_projet, pi.id_piece,
---       CASE WHEN p.nom = 'Projet Gamma' THEN 20 ELSE 40 END,
---       CASE WHEN p.nom = 'Projet Gamma' THEN 5 ELSE 10 END
---FROM tbl_projet p
---inner join tbl_piece pi ON pi.description = 'Belkin Patch Cable Cat6a 1m'
---WHERE p.nom IN ('Projet Gamma', 'Projet Delta');
---GO
+/*
+UPDATE tbl_stock
+SET quantite_stock = 110
+WHERE id_projet = 1 AND id_piece = 1;
+*/
+
+    
+-- Modif 2 (ACCEPTÉE)
+/*
+UPDATE tbl_stock
+SET quantite_stock = 30
+WHERE id_projet = 1 AND id_piece = 1;
+*/
 
 
---/* d) Tests de modification */
+-- Modif 3 (EN LOT – REFUSÉE)
 
----- Modif 1 (REFUS�E)
----- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 15
----- Calcul : 20 < (15 + 6 = 21) ? Faux ? REFUS�
---UPDATE tbl_stock
---SET quantite_stock = 15
---WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
---  AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
---GO
+/*
+UPDATE tbl_stock
+SET quantite_stock = 
+    CASE 
+        WHEN id_stock = 3 THEN 180  
+        WHEN id_stock = 4 THEN 30   
+        ELSE quantite_stock
+    END
+WHERE id_stock IN (3, 4);
+*/
 
 
-----  Modif 2 (ACCEPT�E)
----- Projet Alpha, Cable Matters Cat 6a : QtePrevue 20, Imput�e 6, Stock 10
----- Calcul : 20 >= (10 + 6 = 16) ? OK
---UPDATE tbl_stock
---SET quantite_stock = 10
---WHERE id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Alpha')
---  AND id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a');
---GO
+-- Modif en lot (ACCEPTÉE)
 
-----  Modif en lot (REFUS�E pour Projet Gamma)
----- Gamma: 10 < 15 ? Faux, Delta: 30 >= 5 ? OK
---UPDATE tbl_stock
---SET quantite_stock = 
---    CASE 
---        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Gamma') THEN 15
---        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Delta') THEN 5
---        ELSE quantite_stock
---    END
---WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Asus XG-C100C')
---  AND id_projet IN (
---      SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
---  );
---GO
+/*
+UPDATE tbl_stock
+SET quantite_stock = 
+    CASE 
+        WHEN id_stock = 5 THEN 30
+        WHEN id_stock = 6 THEN 25
+        ELSE quantite_stock
+    END
+WHERE id_stock IN (5, 6);
+*/
 
----- Modif en lot (ACCEPT�E)
----- Gamma: 20 >= 10, Delta: 40 >= 15 ? OK
---UPDATE tbl_stock
---SET quantite_stock = 
---    CASE 
---        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Gamma') THEN 10
---        WHEN id_projet = (SELECT id_projet FROM tbl_projet WHERE nom = 'Projet Delta') THEN 15
---        ELSE quantite_stock
---    END
---WHERE id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Belkin Patch Cable Cat6a 1m')
---  AND id_projet IN (
---      SELECT id_projet FROM tbl_projet WHERE nom IN ('Projet Gamma', 'Projet Delta')
---  );
---GO
+
 
