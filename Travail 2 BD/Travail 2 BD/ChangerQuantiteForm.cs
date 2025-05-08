@@ -69,7 +69,7 @@ namespace Travail_2_BD
             }
             catch (Exception)
             {
-                throw;
+                MessageBox.Show("impossible de changer la quantite");
             }
         }
 
@@ -82,18 +82,20 @@ namespace Travail_2_BD
                 {
                     int noProjet = (int)nomProjetComboBox.SelectedValue;
                     int nombreDeligneAffectee = await managerProjet.SupprimerProjetEtRestaurerInventaireAsync(noProjet);
-                    if (nombreDeligneAffectee > 0) 
+                    if (nombreDeligneAffectee > 0)
                     {
                         MessageBox.Show("Suppression du projet réussi");
                         RemplirComboBoxProjet();
-
+                    }
+                    else 
+                    {
+                        MessageBox.Show("le projet est relié a une imputation donc impossible de la supprimer");
                     }
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
-                    throw;
+                    MessageBox.Show("erreur survenue");
                 }
 
 
