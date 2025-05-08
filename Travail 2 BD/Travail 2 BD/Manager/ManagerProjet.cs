@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Travail_2_BD.Models;
 
@@ -45,10 +46,29 @@ namespace Travail_2_BD.Manager
                 nombreDeLigneAffecte = await context.Procedures.SupprimerProjetEtRestaurerInventaireAsync(idProjet);
                 return nombreDeLigneAffecte;
             }
-            catch (Exception)
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+            {
+                var errorMessage = "Erreur, corrigez puis réessayer. \n\r";
+                if (ex.InnerException is SqlException sqlException)
+                {
+                    if (sqlException.Number == 2628 && sqlException.Message.Contains("pond"))
+                    {
+                        errorMessage += $"la ponderation est trop longue. \n\r";
+                    }
+                    else
+                    {
+                        errorMessage += $" Error Number: {sqlException.Number}\n\r Message: {sqlException.Message}\n\r";
+                    }
+
+
+                }
+                throw new Exception(errorMessage);
+            }
+            catch (Exception) 
             {
                 throw;
             }
+
 
         }
 
@@ -68,6 +88,11 @@ namespace Travail_2_BD.Manager
                         MessageBox.Show("La quantite que vous demander est superieur a la quantite prevu");
                         var ligneErreur = ex.Entries.Single();
                         ligneErreur.Property("QuantitePrevu").CurrentValue = ligneErreur.Property("QuantitePrevu").OriginalValue;
+                    }
+
+                    else 
+                    {
+                        throw ;
                     }
                 }
             }
