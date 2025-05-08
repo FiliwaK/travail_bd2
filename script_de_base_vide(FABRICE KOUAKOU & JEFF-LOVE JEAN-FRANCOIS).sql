@@ -642,6 +642,85 @@ SELECT * FROM tbl_impute WHERE id_stock = @id_stock;
 
 
 
+CREATE OR ALTER FUNCTION dbo.VerifierQuantiteePrevue(@id_stock INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @quantitePrevu INT;
+    DECLARE @quantiteStock INT;
+    DECLARE @quantiteImputee INT;
+    DECLARE @valide INT;
+    SELECT @quantiteImputee = SUM(quantite_impute)
+    FROM tbl_impute
+    WHERE id_stock = @id_stock;
+
+    SET @quantiteImputee = ISNULL(@quantiteImputee, 0);
+
+    RETURN @quantiteImputee;
+END;
+GO
+
+select dbo.VerifierQuantiteePrevue (2)
+go
+
+
+create or alter  trigger VerifierLaQuantiteeEnStock
+on tbl_Stock
+for insert,update
+AS
+--set nocount on
+--if exists ( select inserted.id_piece
+--						from inserted
+--						where id_piece is not null) and update(noEmployeResponsable)
+--begin
+
+
+--select *, dbo.VerifierQuantiteePrevue (id_stock) from inserted
+
+	if exists ( select *, dbo.VerifierQuantiteePrevue (id_stock) from inserted
+							where inserted.quantite_prevu < quantite_stock + 
+							dbo.VerifierQuantiteePrevue (id_stock) )
+	begin
+		rollback;
+		THROW 51000, 'La quantitee est depassee', 16;
+	end
+set nocount off
+go
+
+
+/*
+INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
+values (2, 3,1,2)
+
+select * from tbl_stock
+
+*/
+go
+
+
+/* b) Une piece dans 2 projets + 2 imputations */
+
+-- Imputation 1 - Projet Alpha
+INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
+SELECT TOP 1 id_employee, s.id_stock, 4, GETDATE()
+FROM tbl_employee e
+inner join tbl_stock s ON s.id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a')
+inner join tbl_projet p ON s.id_projet = p.id_projet
+WHERE p.nom = 'Projet Alpha';
+
+go
+
+-- Imputation 2 - Projet Beta
+INSERT INTO tbl_impute (id_employee, id_stock, quantite_impute, date_imputee)
+SELECT TOP 1 id_employee, s.id_stock, 6, GETDATE()
+FROM tbl_employee e
+inner join tbl_stock s ON s.id_piece = (SELECT id_piece FROM tbl_piece WHERE description = 'Cable Matters Cat 6a')
+inner join tbl_projet p ON s.id_projet = p.id_projet
+WHERE p.nom = 'Projet Beta';
+GO
+
+
+
 /* c) Partie C Tests d'ajout refuse */
 /*
 INSERT INTO tbl_stock (id_projet, id_piece, quantite_prevu, quantite_stock)
