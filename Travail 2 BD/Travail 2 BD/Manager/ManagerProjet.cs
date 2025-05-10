@@ -49,19 +49,19 @@ namespace Travail_2_BD.Manager
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
             {
                 var errorMessage = "Erreur, corrigez puis réessayer. \n\r";
-                if (ex.InnerException is SqlException sqlException)
-                {
-                    if (sqlException.Number == 2628 && sqlException.Message.Contains("pond"))
-                    {
-                        errorMessage += $"la ponderation est trop longue. \n\r";
-                    }
-                    else
-                    {
-                        errorMessage += $" Error Number: {sqlException.Number}\n\r Message: {sqlException.Message}\n\r";
-                    }
+                //if (ex.InnerException is SqlException sqlException)
+                //{
+                //    if (sqlException.Number == 2628 && sqlException.Message.Contains("pond"))
+                //    {
+                //        errorMessage += $"la ponderation est trop longue. \n\r";
+                //    }
+                //    else
+                //    {
+                //        errorMessage += $" Error Number: {sqlException.Number}\n\r Message: {sqlException.Message}\n\r";
+                //    }
 
 
-                }
+                //}
                 throw new Exception(errorMessage);
             }
             catch (Exception) 
